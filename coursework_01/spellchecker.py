@@ -1,4 +1,6 @@
 import time, os
+import datetime
+
 #dramatic starting
 print("Starting the program . . .")
 time.sleep(2)
@@ -7,7 +9,15 @@ os.system('clear')
 #function which checks if the words given exist in EnglishWords.txt
 #and if not do the actions on it
 def checking(list):
-	#printing the words of the sentence  
+	total = len(list) #total number of word
+	correct = 0 # number of correct words
+	incorrect = 0 # number of incorrect words
+	added = 0 # number of added words
+	changed = 0 # number of changed words
+
+	start_time = time.time() #the moment the spellchecking begins
+
+	#printing the words of the sentence
 	print("\n ")
 	for word in list:
 		print(word +" ")
@@ -22,7 +32,7 @@ def checking(list):
 		word=list[index]
 
 		if (word in dictionary):
-			print("\n"+word)
+			correct += 1
 
 		else: #the word is not in dictionary
 			print("\nOops, it seems that the word: '" + word +"' does not exist\n")
@@ -32,15 +42,19 @@ def checking(list):
 				cond=input("What do you want to do with this word?\n (1) Ignore it\n (2) Mark it\n (3) Add it to the dictionary\n (4) See a sugestion for this word \n")
 				
 				if (cond == '1'): #ignore the word and go further
+					incorrect += 1
 					break
 
 				elif (cond == '2'): #marking the word
 					list[index] = "?" + word + "?"
+					incorrect += 1
 					break
 
 				elif (cond == '3'): #adding the word to the dictionary
 					#adding it to the list to sort it so we have
 					#the words alphabetically ordered
+					correct += 1
+					added += 1
 
 					dictionary.append(word)
 					dictionary.sort()
@@ -70,16 +84,20 @@ def checking(list):
 						if (maxim < similarity*100):
 							#every time we have a new maximum, we memorise the word 
 							maxim=similarity*100
-							similarWord=suggestion
+							similarWord=suggestions
 					#asking the user for the suggestion
 					while True:
 						cond=input("\nDid you want to type: '" + similarWord +"' ?\n (1) Yes\n (2)No\n")
 						#changing the word in the list if yes
 						if (cond == '1'):
 							list[index]=similarWord
+							correct += 1
+							changed += 1
 							break
+
 						#just ignore it
 						elif (cond == '2'):
+							incorrect += 1
 							break
 
 						else: #if the input is not a command
@@ -88,8 +106,32 @@ def checking(list):
 
 				else: # if the input is not given
 					print("The action you just typed is not an actual command, please try again!\n")
+	
+	end_time = time.time() #the moment of the end of spellchecking
+
+	print("\nThe total number of words: " + str(total) + "\n")
+	print("\nThe number of word spelt correctly: " + str(correct) + "\n")
+	print("\nThe number pf incorrect spelt words: " + str(incorrect) + "\n")
+	print("\nThe number of words added to the dictionary: " + str(added) + "\n")
+	print("\nThe number of words changed by the user accepting the suggested word: " + str(changed) + "\n")
+	
+	moment = datetime.datetime.now()
+	print ("The time and date the input was spellchecked : ")
+	print (moment.strftime("%Y-%m-%d %H:%M:%S") + "\n")
+	
+	print(f"\nThe amount of time elapsed to spellcheck the input: {end_time - start_time}")
 
 
+
+def transform (initial):
+	modified = ""
+
+	for letter in initial:
+		if (letter.isalpha()):
+			letter = letter.lower()
+			modified = modified + letter
+
+	return modified
 
 # The actual start of the program
 print("Hello! What action do you want to execute today?\n") #welcome
@@ -112,9 +154,12 @@ while True:
 		prop = input("\n Please enter the sentence you want to check: ")
 		
 		#splitting the sentence in words
-		words = prop.split()
-
+		original_input = prop.split()
+		words = []
+		for char in original_input:
+			words.append( transform(char) )
 		#checking if the words exist
+
 		checking(words)
 
 
@@ -126,17 +171,23 @@ while True:
 
 			#checking if the file exist or not
 			#if yes, check it, if not asking what do you want to do
-
+			ok=0
 			try:
-
 				f=open(file,"r")
 				sentence=f.read()
-				words=sentence.split()
+				original_input=sentence.split()
+				ok=1
+				words = []
+				for char in original_input:
+					words.append( transform(char) )
 
 				checking(words)
+
 				file.close()
 
 			except:
+				if (ok == 1):
+					break
 				print("The file you just enterd does not exist. ")
 
 				while True:
