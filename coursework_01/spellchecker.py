@@ -1,3 +1,4 @@
+
 import time, os
 import datetime
 
@@ -74,7 +75,7 @@ def checking(list):
 			
 			while True:
 
-				print("\nOops, it seems that the word: '" + word +"' does not exist")
+				print("\nOops, it seems that the word: '" + word +"' does not exist \U0001F625")
 				cond=input("\nWhat do you want to do with this word?\n (1) Ignore it\n (2) Mark it\n (3) Add it to the dictionary\n (4) See a sugestion for this word \n ")
 				
 				if (cond == '1'): #ignore the word and go further
@@ -141,12 +142,12 @@ def checking(list):
 
 						else: #if the input is not a command
 							os.system('clear')
-							print("\nThe command you just typed is not an actual command! Please type again!\n")
+							print("\nThe command you just typed is not an actual command! Please type again! \U0001F615\n")
 					break
 
 				else: # if the input is not given
 					os.system('clear')
-					print("\nThe action you just typed is not an actual command, please try again!\n")
+					print("\nThe action you just typed is not an actual command, please try again! \U0001F615\n")
 					for char in list:
 						print(char +" ")
 
@@ -180,7 +181,7 @@ def checking(list):
 	while True:
 		cond = input("\nDo you want to go back to (1) Main Menu or (2) Quit ? ")
 		if (cond == '2'):
-			print("\nQuitting the program. . .")
+			print("\nQuitting the program. . . \U0001F634")
 			time.sleep(2)
 
 			os.system('clear')
@@ -191,7 +192,7 @@ def checking(list):
 
 		else:
 			os.system('clear')
-			print("\nThe command you just typed does not work, try again!")
+			print("\nThe command you just typed does not work, try again! \U0001F615")
 
 
 # this function transforms the original word in alpha characters
@@ -210,7 +211,7 @@ def transform (initial):
 
 #------------------------------- The actual start of the program -----------------------------
 
-print("Hello! How can I help you today?\n") #welcome
+print("Hello! How can I help you today?\U0001F600\n") #welcome
 
 while True:
 	print("\n(0) Quit the program\n" + "(1) Spellcheck a sentence\n" + "(2) Spellcheck a file\n")
@@ -220,7 +221,7 @@ while True:
 	
 	if (option == '0'):
 		#quiting
-		print("\nQuitting the program. . .")
+		print("\nQuitting the program. . . \U0001F634")
 		time.sleep(2)
 
 		os.system('clear')
@@ -269,7 +270,7 @@ while True:
 				if (ok == 1): # if we already did other staff
 					break
 				os.system('clear')
-				print("\nThe file you just enterd does not exist. ")
+				print("\nThe file you just enterd does not exist. \U0001F615")
 
 				while True:
 					#asking what do you want to do now, go back to checking or to main menu
@@ -283,7 +284,7 @@ while True:
 
 					else:
 						os.system('clear')
-						print("\nThis is not an actual command.")
+						print("\nThis is not an actual command. \U0001F615")
 
 				#executing the operation typed
 				if (cond == '1'):
@@ -294,7 +295,7 @@ while True:
 
 	else:
 		os.system('clear')
-		print("\nThe input you just typed is not an actual command, please try again!")
+		print("\nThe input you just typed is not an actual command, please try again! \U0001F615")
 		
 #--------------------------------------------END-----------------------------------------------
 # just to be 300 lines	
