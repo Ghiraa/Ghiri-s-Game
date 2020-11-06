@@ -22,12 +22,19 @@ def folder(list,total,correct,incorrect,added,changed,moment,end_time,start_time
 	file = open(f, "a")
 	#append the statistics
 	file.write("The total number of words: " + str(total) + "\n")
+
 	file.write("\nThe number of word spelt correctly: " + str(correct) + "\n")
+
 	file.write("\nThe number of incorrect spelt words: " + str(incorrect) + "\n")
+	
 	file.write("\nThe number of words added to the dictionary: " + str(added) + "\n")
+	
 	file.write("\nThe number of words changed by the user accepting the suggested word: " + str(changed) + "\n")
+	
 	file.write("The time and date the input was spellchecked : ")
+	
 	file.write(moment.strftime("%H:%M:%S  %Y-%m-%d") + "\n")
+	
 	file.write(f"\nThe amount of time elapsed to spellcheck the input: {end_time - start_time}\n\n")
 	
 	#append the input
@@ -53,26 +60,31 @@ def checking(list):
 	start_time = time.time() #the moment the spellchecking begins
 
 	#copying the dictionary in a list for easier operations
-	with open('EnglishWords.txt') as file:
+	with open("EnglishWords.txt") as file:
 		dictionary=file.read().split()
 		file.close()
+	ok1 = 1#checking every word given to see if it is in the dictionary or not
+	for char in list:
+		print(char +" ")
 
-	#checking every word given to see if it is in the dictionary or not
 	for index in range(len(list)):
 		word=list[index]
-
+		 # contor to verify if we have some incorrect spelling words
 		if (word in dictionary):
-			for char in list:
-				print(char +" ")
+			if (ok1 == 0):
+				for char in list:
+					print(char +" ")
+
 			print("\n")
 			correct += 1
+			ok1 = 1
 
 		else: #the word is not in dictionary
 			os.system('clear')
 			#printing the words of the sentence
 			for char in list:
 				print(char +" ")
-			
+			ok1 = 0
 			while True:
 
 				print("\nOops, it seems that the word: '" + word +"' does not exist \U0001F625")
@@ -98,7 +110,7 @@ def checking(list):
 
 					#rewriting the list in the dictionary files ("English.txt")
 					file=open("EnglishWords.txt", "w")
-					file.write("")
+					file.write("") #make sure the file is empty
 					file.close()
 
 					file=open("EnglishWords.txt", "a")
@@ -146,7 +158,8 @@ def checking(list):
 					break
 
 				else: # if the input is not given
-					os.system('clear')
+					os.system('clear')# ilustration purposes
+
 					print("\nThe action you just typed is not an actual command, please try again! \U0001F615\n")
 					for char in list:
 						print(char +" ")
@@ -176,7 +189,7 @@ def checking(list):
 	print(f"\nThe amount of time elapsed to spellcheck the input: {end_time - start_time}")
 
 	folder(list,total,correct,incorrect,added,changed,moment,end_time,start_time)
-	os.system('clear')
+	os.system('clear') #ilustration purposes
 	#after spellchecking the input menu
 	while True:
 		cond = input("\nDo you want to go back to (1) Main Menu or (2) Quit ? ")
@@ -197,7 +210,7 @@ def checking(list):
 
 # this function transforms the original word in alpha characters
 def transform (initial):
-	modified = ""
+	modified = "" #initialise a string
 
 	for letter in initial:
 		if (letter.isalpha()):
@@ -270,7 +283,7 @@ while True:
 				if (ok == 1): # if we already did other staff
 					break
 				os.system('clear')
-				print("\nThe file you just enterd does not exist. \U0001F615")
+				print("\nThe file you just enterd does not exist. Please be sure that the file you wanted to type exists in the program folder\U0001F615")
 
 				while True:
 					#asking what do you want to do now, go back to checking or to main menu
