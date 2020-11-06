@@ -2,12 +2,46 @@ import time, os
 import datetime
 
 #dramatic starting
-print("Starting the program . . .")
+os.system('clear')
+print("\n\nStarting the program . . .")
 time.sleep(2)
 os.system('clear')
 
+
+
+#this function creates or rewrites the results folder
+def folder(list,total,correct,incorrect,added,changed,moment,end_time,start_time):
+	f = input("\nPlease insert the name of the file where you want to have the result (do not forget the extension) :")
+	
+	file = open(f,"w")
+	file.write("")
+	# be sure that if the folder already exists, it will be empty
+	file.close()
+
+	file = open(f, "a")
+	#append the statistics
+	file.write("The total number of words: " + str(total) + "\n")
+	file.write("\nThe number of word spelt correctly: " + str(correct) + "\n")
+	file.write("\nThe number of incorrect spelt words: " + str(incorrect) + "\n")
+	file.write("\nThe number of words added to the dictionary: " + str(added) + "\n")
+	file.write("\nThe number of words changed by the user accepting the suggested word: " + str(changed) + "\n")
+	file.write("The time and date the input was spellchecked : ")
+	file.write(moment.strftime("%H:%M:%S  %Y-%m-%d") + "\n")
+	file.write(f"\nThe amount of time elapsed to spellcheck the input: {end_time - start_time}\n\n")
+	
+	#append the input
+	for word in list: 
+		file.write(word + " ")
+
+	file.close()
+
+
+
+
+
+
 #function which checks if the words given exist in EnglishWords.txt
-#and if not do the actions on it
+#and if not, do the actions on it
 def checking(list):
 	total = len(list) #total number of word
 	correct = 0 # number of correct words
@@ -17,29 +51,31 @@ def checking(list):
 
 	start_time = time.time() #the moment the spellchecking begins
 
-	#printing the words of the sentence
-	print("\n ")
-	for word in list:
-		print(word +" ")
-	print("\n")
-
 	#copying the dictionary in a list for easier operations
 	with open('EnglishWords.txt') as file:
 		dictionary=file.read().split()
 		file.close()
-	#checking every word given
+
+	#checking every word given to see if it is in the dictionary or not
 	for index in range(len(list)):
 		word=list[index]
 
 		if (word in dictionary):
+			for char in list:
+				print(char +" ")
+			print("\n")
 			correct += 1
 
 		else: #the word is not in dictionary
-			print("\nOops, it seems that the word: '" + word +"' does not exist\n")
-			print()
+			os.system('clear')
+			#printing the words of the sentence
+			for char in list:
+				print(char +" ")
 			
 			while True:
-				cond=input("What do you want to do with this word?\n (1) Ignore it\n (2) Mark it\n (3) Add it to the dictionary\n (4) See a sugestion for this word \n")
+
+				print("\nOops, it seems that the word: '" + word +"' does not exist")
+				cond=input("\nWhat do you want to do with this word?\n (1) Ignore it\n (2) Mark it\n (3) Add it to the dictionary\n (4) See a sugestion for this word \n ")
 				
 				if (cond == '1'): #ignore the word and go further
 					incorrect += 1
@@ -84,10 +120,13 @@ def checking(list):
 						if (maxim < similarity*100):
 							#every time we have a new maximum, we memorise the word 
 							maxim=similarity*100
-							similarWord=suggestions
+							similarWord=suggestion
+					
 					#asking the user for the suggestion
 					while True:
+						
 						cond=input("\nDid you want to type: '" + similarWord +"' ?\n (1) Yes\n (2)No\n")
+						
 						#changing the word in the list if yes
 						if (cond == '1'):
 							list[index]=similarWord
@@ -101,28 +140,61 @@ def checking(list):
 							break
 
 						else: #if the input is not a command
-							print("The command you just typed is not an actual command! Please type again!\n")
+							os.system('clear')
+							print("\nThe command you just typed is not an actual command! Please type again!\n")
 					break
 
 				else: # if the input is not given
-					print("The action you just typed is not an actual command, please try again!\n")
-	
-	end_time = time.time() #the moment of the end of spellchecking
+					os.system('clear')
+					print("\nThe action you just typed is not an actual command, please try again!\n")
+					for char in list:
+						print(char +" ")
 
-	print("\nThe total number of words: " + str(total) + "\n")
+	end_time = time.time() #the moment of the end of spellchecking
+	
+	time.sleep(1.5)
+	os.system('clear') # only ilustration purposes
+	#printing the statistics
+	print("The total number of words: " + str(total) + "\n")
+	time.sleep(0.5)
 	print("\nThe number of word spelt correctly: " + str(correct) + "\n")
-	print("\nThe number pf incorrect spelt words: " + str(incorrect) + "\n")
+	time.sleep(0.5)
+	print("\nThe number of incorrect spelt words: " + str(incorrect) + "\n")
+	time.sleep(0.5)
 	print("\nThe number of words added to the dictionary: " + str(added) + "\n")
+	time.sleep(0.5)
 	print("\nThe number of words changed by the user accepting the suggested word: " + str(changed) + "\n")
-	
-	moment = datetime.datetime.now()
+	time.sleep(0.5)
+
+	moment = datetime.datetime.now() #actual moment
 	print ("The time and date the input was spellchecked : ")
-	print (moment.strftime("%Y-%m-%d %H:%M:%S") + "\n")
+	print(moment.strftime("%H:%M:%S  %Y-%m-%d") + "\n")
 	
+	time.sleep(0.5)
+	#time elapsed
 	print(f"\nThe amount of time elapsed to spellcheck the input: {end_time - start_time}")
 
+	folder(list,total,correct,incorrect,added,changed,moment,end_time,start_time)
+	os.system('clear')
+	#after spellchecking the input menu
+	while True:
+		cond = input("\nDo you want to go back to (1) Main Menu or (2) Quit ? ")
+		if (cond == '2'):
+			print("\nQuitting the program. . .")
+			time.sleep(2)
+
+			os.system('clear')
+			os._exit(0)
+
+		elif (cond == '1'):
+			break
+
+		else:
+			os.system('clear')
+			print("\nThe command you just typed does not work, try again!")
 
 
+# this function transforms the original word in alpha characters
 def transform (initial):
 	modified = ""
 
@@ -133,13 +205,18 @@ def transform (initial):
 
 	return modified
 
-# The actual start of the program
-print("Hello! What action do you want to execute today?\n") #welcome
+
+
+
+#------------------------------- The actual start of the program -----------------------------
+
+print("Hello! How can I help you today?\n") #welcome
 
 while True:
-	print("(0) Quit the program\n" + "(1) Spellcheck a sentence\n" + "(2) Spellcheck a file\n")
+	print("\n(0) Quit the program\n" + "(1) Spellcheck a sentence\n" + "(2) Spellcheck a file\n")
+	
 	#asking for which action do you want to execute
-	option=input("Enter the number of the action you want to be executed: ")
+	option=input("\nEnter the number of the action you want to be executed: ")
 	
 	if (option == '0'):
 		#quiting
@@ -171,7 +248,9 @@ while True:
 
 			#checking if the file exist or not
 			#if yes, check it, if not asking what do you want to do
-			ok=0
+			
+			ok=0 # a contor for remebering the option
+
 			try:
 				f=open(file,"r")
 				sentence=f.read()
@@ -186,9 +265,11 @@ while True:
 				file.close()
 
 			except:
-				if (ok == 1):
+
+				if (ok == 1): # if we already did other staff
 					break
-				print("The file you just enterd does not exist. ")
+				os.system('clear')
+				print("\nThe file you just enterd does not exist. ")
 
 				while True:
 					#asking what do you want to do now, go back to checking or to main menu
@@ -201,7 +282,8 @@ while True:
 						break
 
 					else:
-						print("This is not an actual command.")
+						os.system('clear')
+						print("\nThis is not an actual command.")
 
 				#executing the operation typed
 				if (cond == '1'):
@@ -211,8 +293,8 @@ while True:
 					break
 
 	else:
-
+		os.system('clear')
 		print("\nThe input you just typed is not an actual command, please try again!")
 		
-
-	
+#--------------------------------------------END-----------------------------------------------
+# just to be 300 lines	

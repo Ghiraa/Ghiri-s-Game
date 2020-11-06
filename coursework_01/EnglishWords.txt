@@ -4580,10 +4580,10 @@ atrophy
 atrophying
 atropine
 attach
+attach
 attachable
 attached
 attaches
-attach
 attaching
 attachment
 attachments
@@ -5788,6 +5788,7 @@ barnabas
 barnabus
 barnacle
 barnacles
+barnaise
 barnard
 barnes
 barnet
@@ -6127,6 +6128,7 @@ bazooka
 bazookas
 bbc
 bc
+bchamel
 be
 beach
 beachcomber
@@ -6994,8 +6996,6 @@ beyond
 bezel
 bezels
 bezique
-barnaise
-bchamel
 bhopal
 bhutan
 bi
@@ -9993,6 +9993,8 @@ cabriolets
 cabs
 cacao
 cacaos
+cacat
+cacat
 cache
 cacheable
 cached
@@ -10376,9 +10378,9 @@ canalizes
 canalizing
 canals
 canap
+canap
 canape
 canapes
-canap
 canaps
 canaps
 canard
@@ -13209,9 +13211,9 @@ cleverness
 clew
 clews
 clich
+clich
 cliche
 cliches
-clich
 clichs
 clichs
 click
@@ -14347,9 +14349,9 @@ communing
 communion
 communions
 communiqu
+communiqu
 communique
 communiques
-communiqu
 communiqus
 communiqus
 communis
@@ -15372,8 +15374,8 @@ consolidators
 consoling
 consols
 consomm
-consomme
 consomm
+consomme
 consomms
 consomms
 consonance
@@ -16986,6 +16988,8 @@ craziness
 crazing
 crazy
 crche
+crche
+crches
 crches
 creak
 creaked
@@ -17133,8 +17137,6 @@ crewing
 crewman
 crewmen
 crews
-crche
-crches
 cri
 crianlarich
 crib
@@ -17423,8 +17425,8 @@ crudely
 crudeness
 cruder
 crudest
-crudits
 crudities
+crudits
 crudits
 crudity
 cruel
@@ -17558,6 +17560,7 @@ crystals
 cs
 ctenophore
 ctenophores
+cu
 cub
 cuba
 cubage
@@ -18399,6 +18402,9 @@ dazzling
 dazzlingly
 dbe
 dbes
+dclass
+dcollet
+dcolletage
 dcvos
 ddss
 ddt
@@ -20595,11 +20601,6 @@ dextrose
 dextrous
 dextrously
 dextrousness
-dclass
-dcolletage
-dcollet
-dtente
-dtentes
 dfc
 dfm
 dhabi
@@ -23262,6 +23263,8 @@ dsc
 dsm
 dso
 dsos
+dtente
+dtentes
 du
 dual
 dualism
@@ -27228,6 +27231,7 @@ ezekiel
 ezra
 f
 fa
+faadism
 faber
 faberge
 fabian
@@ -27329,7 +27333,6 @@ factum
 facultative
 faculties
 faculty
-faadism
 fad
 faddish
 faddy
@@ -28176,11 +28179,11 @@ fez
 fezzes
 ffestiniog
 fi
+fianc
 fiance
 fiancee
 fiancees
 fiances
-fianc
 fiancs
 fiasco
 fiascoes
@@ -33382,6 +33385,7 @@ gutting
 guttural
 gutturally
 gutturals
+guvid
 guy
 guyana
 guyed
@@ -33484,6 +33488,7 @@ habitational
 habitations
 habitats
 habits
+habitu
 habitual
 habitually
 habituate
@@ -33494,7 +33499,6 @@ habituation
 habitude
 habitudes
 habitue
-habitu
 habitus
 hable
 hables
@@ -46230,8 +46234,6 @@ mezzo
 mezzos
 mezzotint
 mezzotints
-mtier
-mtiers
 mg
 mho
 mhos
@@ -46583,6 +46585,7 @@ milted
 milting
 milton
 milts
+milungi
 milwaukee
 mim
 mime
@@ -48207,9 +48210,12 @@ mr
 mrs
 ms
 msc
+mtier
+mtiers
 mu
 much
 muchness
+muci
 mucilage
 mucilaginous
 muck
@@ -48270,6 +48276,7 @@ mugging
 muggings
 muggy
 mugs
+muie
 muir
 mukluk
 mukluks
@@ -48697,9 +48704,11 @@ nacres
 nadine
 nadir
 nadirs
+naf
 naffed
 naffing
 naffs
+nafs
 nag
 nagasaki
 nagged
@@ -48725,8 +48734,6 @@ naively
 naives
 naivet
 naivety
-naf
-nafs
 naked
 nakedly
 nakedness
@@ -51575,6 +51582,7 @@ output
 outputs
 outputted
 outputting
+outr
 outrage
 outraged
 outrageous
@@ -51592,7 +51600,6 @@ outreach
 outreached
 outreaches
 outreaching
-outr
 outrider
 outriders
 outrigger
@@ -53256,6 +53263,7 @@ pashto
 pashtos
 paso
 pass
+pass
 passable
 passably
 passage
@@ -53271,7 +53279,6 @@ passerine
 passerines
 passers
 passes
-pass
 passim
 passing
 passion
@@ -56763,6 +56770,7 @@ prayerfully
 prayers
 praying
 prays
+prcis
 pre
 preach
 preached
@@ -57354,7 +57362,6 @@ prey
 preyed
 preying
 preys
-prcis
 priapism
 price
 priced
@@ -58242,9 +58249,9 @@ provably
 prove
 proved
 proven
+provenal
 provenance
 provence
-provenal
 provender
 provenience
 proverb
@@ -58527,6 +58534,7 @@ puked
 pukes
 puking
 pukka
+pula
 pulchritude
 pulchritudinous
 pule
@@ -63857,11 +63865,10 @@ rotund
 rotunda
 rotundas
 rotundity
+rou
 rouble
 roubles
 rouen
-rou
-rous
 rouge
 rouged
 rouges
@@ -63917,6 +63924,7 @@ roundtable
 roundup
 roundups
 roundworm
+rous
 rouse
 roused
 rouses
@@ -64922,10 +64930,10 @@ saunton
 saurian
 sausage
 sausages
-sauterne
-sauternes
 saut
 sauted
+sauterne
+sauternes
 sauting
 sauts
 sauvignon
@@ -69025,7 +69033,6 @@ societal
 societas
 societies
 society
-socit
 sociologic
 sociological
 sociologically
@@ -69033,6 +69040,7 @@ sociologist
 sociologists
 sociology
 sociopathic
+socit
 sock
 socked
 socket
@@ -69249,6 +69257,7 @@ solves
 solving
 solvitur
 solway
+solz
 solzhenitsyn
 soma
 somali
@@ -75940,12 +75949,12 @@ totting
 toucan
 toucans
 touch
+touch
 touchable
 touchdown
 touchdowns
 touched
 touches
-touch
 touchier
 touchiest
 touchiness
