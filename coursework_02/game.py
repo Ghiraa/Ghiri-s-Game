@@ -29,12 +29,27 @@ def place_first_obstacle():
 	obstacles.append( canvas.create_rectangle(0, 0, x, 40, fill="white") )
 	obstacles.append( canvas.create_rectangle(x+150,0 , 1280, 40, fill="white") )
 
-def collision(i):
+def check_collision(i):
 	coords1 = canvas.coords(obstacles[i])
 	coords2 = canvas.coords(obstacles[i+1])
 	xy = canvas.coords(player)
-	
-	if ( (xy[0] <= coords1[2] and xy[1] - 30 == coords1[3]) or ( xy[0] >= coords2[0] and xy[1] - 30 == coords2[3] )  ):
+	#check for frontal collision
+	if ( (xy[0] - 10 <= coords1[2] and xy[1] - 30 == coords1[3]) or ( xy[0] + 8 >= coords2[0] and xy[1] - 30 == coords2[3] )  ):
+		return True
+	#check for right wind collision
+	if ( xy[0] <= coords2[0] and xy[0] + 50 >= coords2[0] and xy[1] - 10 < coords2[3] and xy[1] - 10 >= coords2[1] ):
+		return True
+	#check for left wing collision
+	if ( xy[0] >= coords1[2] and xy[0] - 50 <= coords1[2] and xy[1] - 10 < coords1[3] and xy[1] - 10 >= coords1[1] ):
+		return True
+
+	return False
+
+def check_score(i):
+	coords1 = canvas.coords(obstacles[i])
+	coords2 = canvas.coords(obstacles[i+1])
+	xy = canvas.coords(player)
+	if ( xy[0] >= coords1[2] and xy[0] <= coords2[0] and xy[1] + 30 == coords2[1] ):
 		return True
 
 	return False
@@ -42,19 +57,28 @@ def collision(i):
 def spawning_obstacles():
 	global ok
 	global start
+	global score
 
 	if (start == 5):
-		ok = 0
+		ok = False
 
 	if (ok):
 
 		for i in range(0, start, 2):
 
-			canvas.move(obstacles[i], 0, 5) # moving the obstacles to the left
+			canvas.move(obstacles[i], 0, 5) # moving the obstacles down
 			canvas.move(obstacles[i+1], 0, 5)
 			
-			if ( collision(i) ):
+			if ( check_collision(i) ):
 				return False
+
+			if ( check_score(i) ):
+
+				score += 100
+				score_text = "Score:" + str(score)
+				canvas.itemconfig(txt, text=score_text)
+			else:
+				canvas.tag_raise("guvid")
 
 			xy_last = canvas.coords(obstacles[start-1])
 
@@ -86,8 +110,15 @@ def spawning_obstacles():
 					canvas.move(obstacles[i], 0, 5) # moving the obstacles to the left
 					canvas.move(obstacles[i+1], 0, 5)
 
-					if ( collision(i) ):
+					if ( check_collision(i) ):
 					 	return False
+
+					if ( check_score(i) ):
+						score += 100
+						score_text = "Score:" + str(score)
+						canvas.itemconfig(txt, text=score_text)
+					else:
+						canvas.tag_raise("guvid")
 
 				else:
 
@@ -119,14 +150,14 @@ window = setWindowsDimensions(width, height)
 canvas = Canvas(window, width=width, height=height)
 
 spacecraft = PhotoImage(file="character.png")
-background = PhotoImage(file="pule.png")
-bg = canvas.create_image(0, 0, image=background)
+background = PhotoImage(file="background1.png")
+bg = canvas.create_image(0, 0, image=background,anchor="nw")
 
 player = canvas.create_image(width/2, height/2, image=spacecraft)
 
 score = 0
 score_text = "Score:" + str(score)
-txt = canvas.create_text(40, 30, fill="black", font="Times 20 italic bold", text=score_text)
+txt = canvas.create_text(40, 30, fill="black", font="Times 20 italic bold", text=score_text, tag="guvid")
 
 canvas.bind("<Left>", move_left)
 canvas.bind("<Right>", move_right)
@@ -134,9 +165,7 @@ canvas.focus_set()
 
 place_first_obstacle()
 
-global ok
-global start
-ok = 1
+ok = True
 start = 1
 
 running()
