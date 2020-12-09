@@ -7,10 +7,18 @@ from random import randint as rand
 
 
 def move_left(event):
-	canvas.move(player, -15, 0)
+	global player
+	global p
+	xy = canvas.coords(player)
+	if (xy[0] - 45 > 0 and not p):
+		canvas.move(player, -15, 0)
 
 def move_right(event):
-	canvas.move(player, 15, 0)
+	global player
+	global p
+	xy = canvas.coords(player)
+	if (xy[0] + 45 < 1280 and not p):
+		canvas.move(player, 15, 0)
 
 def setWindowsDimensions(w, h):
 	window = Tk()
@@ -41,6 +49,12 @@ def check_collision(i):
 		return True
 	#check for left wing collision
 	if ( xy[0] >= coords1[2] and xy[0] - 30 <= coords1[2] and xy[1] - 10 < coords1[3] and xy[1] - 10 >= coords1[1] ):
+		return True
+	#check back collision for left wing
+	if ( xy[1] + 25 >= coords1[1] and xy[1] + 25 <= coords1[3] and xy[0] - 30 <= coords1[2]):
+		return True
+	#check back collision for right wing
+	if ( xy[1] + 25 >= coords2[1] and xy[1] + 25 <= coords2[3] and xy[0] + 30 >= coords2[0]):
 		return True
 
 	return False
@@ -121,8 +135,10 @@ def spawning_obstacles():
 def pause(event):
 	global p
 	if (event.char == 'p'):
+
 		if (p):
 			p = False
+
 		else:
 			p = True 
 
@@ -140,6 +156,7 @@ def running():
 	canvas.pack()
 	canvas.config(bg="black")
 	global GameOver
+
 	if (not p):
 		GameOver = spawning_obstacles()
 
@@ -160,13 +177,17 @@ def game():
 	canvas.delete("all")
 	global spacecraft
 	global background
+
 	spacecraft = PhotoImage(file="character.png")
 	background = PhotoImage(file="background1.png")
 	bg = canvas.create_image(0, 0, image=background,anchor="nw")
+
 	global player
 	player = canvas.create_image(width/2, height/2, image=spacecraft)
+
 	global altitude
 	global txt
+
 	altitude = 0
 	height_text = "ALTITUDE: " + str(altitude) + " ft"
 	txt = canvas.create_text(20, 10, fill="#3F6370", font="OCRB 20 bold", text=height_text, tag="height", anchor="nw")
@@ -184,12 +205,66 @@ def game():
 	ok = True
 	start = 1
 	p = False
+
 	running()
+
+def bindings():
+	return 1
+def rules():
+	return 1
+def game2():
+	return 1
+def leaderboard():
+	return 1
+
+def quitting():
+	canvas.destroy()
+	window.quit()
+
+def start_menu():
+	canvas.pack()
+	global background
+	global spacecraft
+
+	background = PhotoImage(file="background1.png")
+	canvas.create_image(0, 0, image=background, anchor="nw")
+	
+	spacecraft = PhotoImage(file="character.png")
+	canvas.create_image(width/2, height/2, image=spacecraft)
+
+	#New Game Button
+	start = Button(window, text="New Game", font="OCRB 10 bold", command=game)
+	canvas.create_window(width/2, height/2-150, window=start)
+	
+	#Load Game Button
+	load = Button(window, text="Load Game", font="OCRB 10 bold", command=game2)
+	canvas.create_window(width/2, height/2-100, window=load)
+	
+	#Leaderboard Button
+	lead = Button(window, text="Leaderboard", font="OCRB 10 bold", command=leaderboard)
+	canvas.create_window(width/2, height/2-50, window=lead)
+	
+	#How to Play Button
+	howto = Button(window, text="How to Play", font="OCRB 10 bold", command=rules)
+	canvas.create_window(width/2, height/2+50, window=howto)
+
+	#Change Control Button
+	settings = Button(window, text="Control Settings", font="OCRB 10 bold", command=bindings)
+	canvas.create_window(width/2, height/2+100, window=settings)
+
+	#Quit Button
+	quit = Button(window, text="Quit Game", font="OCRB 10 bold", command=quitting)
+	canvas.create_window(width/2, height/2+150, window=quit)
+	
+
+
+
 
 width =1280
 height =720
 window = setWindowsDimensions(width, height)
 canvas = Canvas(window, width=width, height=height)
-game()
+
+start_menu()
 
 window.mainloop()
