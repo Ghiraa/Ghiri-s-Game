@@ -1,289 +1,494 @@
 #1920 x 1080 resolution
 
 #<------- Ghiri Studios ------>
-from tkinter import Tk, Canvas, PhotoImage, Entry, Button
+from tkinter import Tk, Canvas, PhotoImage, Entry, Button, StringVar
 from time import sleep
 from random import randint as rand
+import os
 
-
+# The function which moves the player to the left
 def move_left(event):
 	global player
-	global p
-	if ( player in canvas.find_all() ):
+	global b # represents the boss state, if it is true, it means the boss pause is on
+	global p # represents the pause state, if it is true, it means the pause is on
+
+	if ( player in canvas.find_all() ): #if the player exist move it to the left
 		xy = canvas.coords(player)
-		if (xy[0] - 45 > 0 and not p):
+		if (xy[0] - 45 > 0 and not p and not b):#if it will not go outside the map if moved and the game is not paused or the boss pause
 			canvas.move(player, -15, 0)
 
+# The function which moves the player to the right
 def move_right(event):
 	global player
+	global b
 	global p
+
 	if ( player in canvas.find_all() ):
 		xy = canvas.coords(player)
-		if (xy[0] + 45 < 1280 and not p):
+		if (xy[0] + 45 < 1280 and not p and not b): # same as move_left function but we have to test if it will not go outside the map if moved right
 			canvas.move(player, 15, 0)
 
-def setWindowsDimensions(w, h):
+def setWindowsDimensions(w, h): # setting the tkinter dimensions and positions
 	window = Tk()
 	window.title("Ghiri's Game")
-	ws = window.winfo_screenwidth()
-	hs = window.winfo_screenheight()
+	ws = window.winfo_screenwidth()# getting screen width
+	hs = window.winfo_screenheight()# getting screen height
 	x = (ws/2) - (w/2)
 	y = (hs/2) - (h/2)
 	window.geometry('%dx%d+%d+%d' % (w, h, x, y))
 	return window
 
-def place_first_obstacle():
-	x = rand(10, 1130)
+def place_first_obstacle(): # placing the first obstacles in the canvas
 	global obstacles
-	obstacles = []
-	obstacles.append( canvas.create_rectangle(0, 0, x, 40, fill="white") )
-	obstacles.append( canvas.create_rectangle(x+150,0 , 1280, 40, fill="white") )
 
-def check_collision(i):
-	coords1 = canvas.coords(obstacles[i])
-	coords2 = canvas.coords(obstacles[i+1])
+	obstacles = []
+	x = rand(10, 1130)  # generating a random spot for the hole between the obstacles
+
+	obstacles.append( canvas.create_rectangle(0, 0, x, 40, fill="white") ) # this is the left half of an obstacle
+	obstacles.append( canvas.create_rectangle(x+150,0 , 1280, 40, fill="white") )# this is the right half of an obstacle
+
+def check_collision(i): # function which text if there is any collision between the player and the obstacles
+	coords1 = canvas.coords(obstacles[i]) # getting the coordinates of the first half
+	coords2 = canvas.coords(obstacles[i+1]) # getting the coordinates of the second half
 	xy = canvas.coords(player)
+
 	#check for frontal collision
 	if ( (xy[0] - 10 <= coords1[2] and xy[1] - 30 == coords1[3]) or ( xy[0] + 8 >= coords2[0] and xy[1] - 30 == coords2[3] )  ):
 		return True
+	
 	#check for right wing collision
 	if ( xy[0] <= coords2[0] and xy[0] + 30 >= coords2[0] and xy[1] - 10 < coords2[3] and xy[1] - 10 >= coords2[1] ):
 		return True
+	
 	#check for left wing collision
 	if ( xy[0] >= coords1[2] and xy[0] - 30 <= coords1[2] and xy[1] - 10 < coords1[3] and xy[1] - 10 >= coords1[1] ):
 		return True
+	
 	#check back collision for left wing
 	if ( xy[1] + 25 >= coords1[1] and xy[1] + 25 <= coords1[3] and xy[0] - 30 <= coords1[2]):
 		return True
+	
 	#check back collision for right wing
 	if ( xy[1] + 25 >= coords2[1] and xy[1] + 25 <= coords2[3] and xy[0] + 30 >= coords2[0]):
 		return True
 
 	return False
 
-def negation():
+def negation(): #this function will turn the cheat off it is on
 	global cheat
 	cheat = False
 
-def spawning_obstacles():
-	global ok
+def spawning_obstacles(): # this function spawns the first obstacles and then just loop them through canvas
+	global ok             # if an obstacle is at the end of the canvas, function deletes it and spawns at top
 	global start
 	global altitude
 	global cheat
 	global no_obstacles
-	if (start == 5):
+
+	if (start == 5): # this means we spawned all five obstacles so we can start looping them
 		ok = False
 
-	if (ok):
+	if (ok): # first case when not all obstacles were spawned
 
-		for i in range(0, start, 2):
+		for i in range(0, start, 2): #going through those which are already spawned
 
 			canvas.move(obstacles[i], 0, 5) # moving the obstacles down
 			canvas.move(obstacles[i+1], 0, 5)
-			altitude += 1
+
+			altitude += 1 # increasing the altitude because we are moving
 			height_text = "ALTITUDE: " + str(altitude) + " ft"
-			canvas.itemconfig(txt, text=height_text)
+			canvas.itemconfig(txt, text=height_text) # reconfiguring the text displayed at top left
 			canvas.tag_raise("height")
 
-			if ( check_collision(i) and not cheat):
+			if ( check_collision(i) and not cheat): # checking for collision with the obstacles and if the cheat is off so we have collissions
 				return False
 
-			if (cheat):
-				if ( no_obstacles > 0 ):
-					cheat_obstacles(i)
-					if ( no_obstacles == 0 ):
+			if (cheat): # if cheat is on we have to count the number of obstacles we go through so we can turn it off
+				if ( no_obstacles > 0 ): # if we still have obstacles we need to count
+					cheat_obstacles(i) # check if we passed the current obstacle
+
+					if ( no_obstacles == 0 ): # when we finished the number of obstacles we have to turn the cheat off
 							window.after(2000,negation)
 
-			xy_last = canvas.coords(obstacles[start-1])
+			xy_last = canvas.coords(obstacles[start-1]) # getting the coordinates of the last spawned obstacle
 
-			if ( xy_last[1] > 250):
-				start+=2
-				x = rand(10, 1130)
+			if ( xy_last[1] > 250): # if there is enough space between the last obstacle and top of the window we can spawn the next one
+				start+=2 # count the new obstacle too
+
+				x = rand(10, 1130) # getting a random hole for the obstacle
 				obstacles.append(canvas.create_rectangle(0, 0, x, 40, fill="white"))
 				obstacles.append(canvas.create_rectangle(x+150,0 , 1280, 40, fill="white"))
 
 		return True
 
-	else:
+	else: # all the obstacles are spawned
 
 		for i in range(0, 6, 2): 
 
 			if (i == 0):
-				last_object = 5
+				last_object = 5 # for the first obstacle the last obstacle is the third one
+
 			else:
-				last_object = i-1
+				last_object = i-1 # else is the one behind
 
-			xy_last = canvas.coords(obstacles[last_object])
+			xy_last = canvas.coords(obstacles[last_object]) # getting the coordiantes of the last obstacle
 
-			try:
+			try: #if the current obstacle exist
 
-				xy_obj = canvas.coords(obstacles[i])
+				xy_obj = canvas.coords(obstacles[i]) # getting the coordinates of it
 
-				if (xy_obj[1] < 720):
+				if (xy_obj[1] < 720): # if we can move it down
 
-					canvas.move(obstacles[i], 0, 5) # moving the obstacles to the left               NU UITA SA SCHIMBI VITEZA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					canvas.move(obstacles[i], 0, 5) # moving the obstacle down               NU UITA SA SCHIMBI VITEZA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 					canvas.move(obstacles[i+1], 0, 5)
-					altitude += 5
+
+					altitude += 1 # increasing the altitude
 					height_text = "ALTITUDE:" + str(altitude) + "ft"
-					canvas.itemconfig(txt, text=height_text)
+					canvas.itemconfig(txt, text=height_text) # recondifugring the text displayed at top left
 					canvas.tag_raise("height")
 
-					if ( check_collision(i) and not cheat):
+					if ( check_collision(i) and not cheat): # checking for collision between the player and teh current obstacle
 					 	return False
 
-					if (cheat):
-						if ( no_obstacles > 0 ):
-							cheat_obstacles(i)
-							if ( no_obstacles == 0 ):
+					if (cheat): # if the cheat is on we have to count the number of obstacles we go through so we can turn it off
+						if ( no_obstacles > 0 ): # if we still have obstacles we need to count
+							cheat_obstacles(i) # check if we passed the current obstacle 
+
+							if ( no_obstacles == 0 ): # when we finished the number of obstacles we have to turn the cheat off
 								window.after(2000, negation)
 
-				else:
+				else: # it means the obstacle is at the bottom of the canvas so we have to delete it
 
 					canvas.delete(obstacles[i])
 					canvas.delete(obstacles[i+1])
 
-			except:
-					if (obstacles[i] not in canvas.find_all() and (xy_last[1] > 250) ):
-						x = rand(10, 1130)
-						obstacles[i]=canvas.create_rectangle(0, 0, x, 40, fill="white")
+			except: # it means the current obstacle is deleted from the canvas
+
+					if (obstacles[i] not in canvas.find_all() and (xy_last[1] > 250) ): #if there is enough space between the last obstacle and the top of the canvas we have to spawn it
+
+						x = rand(10, 1130) # generating a random hole for the obstacle
+						obstacles[i]=canvas.create_rectangle(0, 0, x, 40, fill="white") # spawn the obstacles
 						obstacles[i+1]=canvas.create_rectangle(x+150,0 , 1280, 40, fill="white")
 
 		return True
 
-def cheat_obstacles(i):
+def cheat_obstacles(i): # this function counts the number of obstacles you go through when you have the cheat on
 	global no_obstacles
-	coords1 = canvas.coords(obstacles[i])
-	coords2 = canvas.coords(obstacles[i+1])
-	xy = canvas.coords(player)
+
+	coords1 = canvas.coords(obstacles[i]) #coordinates of the first half of the obstacle i
+	coords2 = canvas.coords(obstacles[i+1]) # coordinates of the second half of the obstacle i
+	xy = canvas.coords(player)# coordinates of the spacecraft
+
 	#check to see if you pass obstacle i
 
 	if ( xy[1] - 30 >= coords1[3] and xy[1] - 30 <= coords2[3]):
-		no_obstacles -= 1
+		no_obstacles -= 1 # we passed obstacle i so we count
 
 
-def cheatcode(event):
+def cheatcode(event): # this function checks if the cheat is off and turns it on
 	global cheat
 	global no_obstacles
-	if ( not cheat):
-		cheat = True
-		no_obstacles = 3
 
-def pause(event):
+	if ( not cheat ):
+		cheat = True
+		no_obstacles = 3 # initialising the numbers of obstacles we can go through
+
+def deletesave():
+	global save_img
+	global go_back
+	global saved
+	global save_button
+	canvas.delete("savebuttons")
+	canvas.delete(save_img)
+	canvas.delete(go_back)
+
+	saved = canvas.create_window(width/2, height/2 + 50, window = save_button)
+	canvas.bind("<p>", pause)
+
+def deletesavepage():
+	canvas.delete(go_back2)
+	canvas.delete(name_save_submit)
+	canvas.delete(name_save_window)
+	canvas.delete(warning)
+
+	canvas.itemconfig(saveBTN1, state="normal")
+	canvas.itemconfig(saveBTN2, state="normal")
+	canvas.itemconfig(saveBTN3, state="normal")
+	canvas.itemconfig(saveBTN4, state="normal")
+	canvas.itemconfig(saveBTN5, state="normal")
+	canvas.itemconfig(go_back, state="normal")
+
+def renamefile(a):
+	name = name_save.get()
+	for file in os.listdir():
+		if (file == a):
+			save = open(file, "w")
+			save.write( str(altitude) )
+			save.close()
+			os.rename(file, name)
+			break
+
+
+
+def saving(no):
+	canvas.itemconfig(go_back, state="hidden")
+	global go_back2
+	global name_save_submit
+	global name_save_window
+	global warning
+	global name_save
+
+	warning =canvas.create_text(width/2, 40, text="")
+
+	canvas.itemconfig(saveBTN1, state="hidden")
+	canvas.itemconfig(saveBTN2, state="hidden")
+	canvas.itemconfig(saveBTN3, state="hidden")
+	canvas.itemconfig(saveBTN4, state="hidden")
+	canvas.itemconfig(saveBTN5, state="hidden")
+
+	name_save = Entry(window)
+	name_save_window = canvas.create_window(width/2, height/2, window=name_save)
+	
+	go_back_btn2 = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesavepage)# button for submiting the nickname
+	go_back2 = canvas.create_window(50, 700, window = go_back_btn2)
+	
+	if ( no == 1 ):
+
+		if ( save1["text"][:2] != "sv" ):
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save1["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn) 
+
+	if ( no == 2 ):
+
+		if ( save2["text"][:2] != "sv" ):
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save2["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
+
+	if ( no == 3 ):
+
+		if ( save3["text"][:2] != "sv" ):
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save3["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
+
+	if ( no == 4 ):
+
+		if ( save4["text"][:2] != "sv" ):
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save4["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
+
+	if ( no == 5 ):
+
+		if ( save5["text"][:2] != "sv" ):
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save5["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
+
+def save():
+	global saved
+	global save_bg
+	global save_img
+	global go_back_btn
+	global go_back
+	global saveF
+	global no_files
+	global saveBTN1
+	global saveBTN2
+	global saveBTN3
+	global saveBTN4
+	global saveBTN5
+	global save1
+	global save2
+	global save3
+	global save4
+	global save5
+
+	canvas.delete(saved)
+	canvas.unbind("<p>")
+
+	save_bg = PhotoImage(file="background1.png") # game's background
+	save_img = canvas.create_image(0, 0, image=background, anchor="nw")
+
+	go_back_btn = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesave)# button for submiting the nickname
+	go_back = canvas.create_window(50, 700, window = go_back_btn) 
+
+	x = -100
+	no_files = 0
+	for files in os.listdir():
+
+		if ( len(files) == 3 ):
+			no_files += 1
+			x += 50
+			if (no_files == 1):
+				save1 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: saving(no) ) )# button for submiting the nickname
+				saveBTN1 = canvas.create_window(width/2 , height/2 + x, window = save1, tag="savebuttons")
+			
+			if (no_files == 2):
+				save2 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: saving(no) ))# button for submiting the nickname
+				saveBTN2 = canvas.create_window(width/2 , height/2 + x, window = save2, tag="savebuttons")
+			
+			if (no_files == 3):
+				save3 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: saving(no) ))# button for submiting the nickname
+				saveBTN3 = canvas.create_window(width/2 , height/2 + x, window = save3, tag="savebuttons")
+			
+			if (no_files == 4):
+				save4 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: saving(no) ))# button for submiting the nickname
+				saveBTN4 = canvas.create_window(width/2 , height/2 + x, window = save4, tag="savebuttons")
+			
+			if (no_files == 5):
+				save5 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: saving(no) ))# button for submiting the nickname
+				saveBTN5 = canvas.create_window(width/2 , height/2 + x, window = save5, tag="savebuttons")
+			 
+
+
+def pause(event): # this function checks if the pause is on and turn it off and vice-versa
 	global p
 	global pause_text
 	global bg_pause
-	if (event.char == 'p'):
+	global saved
+	global save_button
+	if (p):
+		p = False
 
-		if (p):
-			p = False
+		if ( pause_text in canvas.find_all() and bg_pause in canvas.find_all() and saved in canvas.find_all() ): # we turn off the pause so we delete the pause text
+			canvas.delete(pause_text)
+			canvas.delete(bg_pause)
+			canvas.delete(saved)
 
-			if ( pause_text in canvas.find_all() and bg_pause in canvas.find_all() ):
-				canvas.delete(pause_text)
-				canvas.delete(bg_pause)
+	else: # we turn on the pause so we spawn the pause text and the save button
+		p = True
+		bg_pause = canvas.create_rectangle(width/2 - 250, height/2 - 100, width/2 + 250, height/2 + 100, fill="#80bfff")
+		pause_text = canvas.create_text(width/2, height/2, text = "GAME PAUSED", fill="white", font="OCRB 40 bold")
+		
+		save_button = Button(window, text="Save the game", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = save)# button for submiting the nickname
+		saved = canvas.create_window(width/2, height/2 + 50, window = save_button) 
 
-		else:
-			bg_pause = canvas.create_rectangle(width/2-250, height/2 - 100, width/2 + 250, height/2 + 100, fill="#80bfff")
-			pause_text = canvas.create_text(width/2, height/2, text = "GAME PAUSED", fill="white", font="OCRB 40 bold")
-			p = True 
 
-def bosskey(event):
+
+def bosskey(event): # this function checks if the "boss key" is activated and spawn the image
 	global b
 	global boss_image
 	global boss
 
-	if (b):
+	if (b): # checks if the boss key is active so turn it off
 		b = False
-		if ( boss in canvas.find_all() ):
+		if ( boss in canvas.find_all() ): #deleting the "boss" image
 			canvas.delete(boss)
 
-	else:
-		boss_image = PhotoImage(file="boss2.PNG")
+	else:# turn on the boss key and spawn the "boss" image
+		boss_image = PhotoImage(file="boss2.PNG") 
 		boss = canvas.create_image(0, 0, image=boss_image, anchor="nw")
 		b = True 
 
-def getname():
+def getname(): #this functions gets the name the player is asked for
 	global name_input
+
 	username = name_input.get()
-	canvas.delete("all")
+	canvas.delete("all") #delete all we have in canvas so we can create a new background
 
 	global lost
-	lost = PhotoImage(file="lose.png")
+	lost = PhotoImage(file="lose.png") # creating the "game lost" background
 	canvas.create_image(0, 0, image=lost, anchor="nw")
 
-	tryagain = Button(window, text="Try Again", font="OCRB 10 bold", command=game, background="grey", highlightthickness=0)
+	#Try Again button
+	tryagain = Button(window, text="Try Again", font="OCRB 30 bold", command=game, background="grey", highlightthickness=0)
 	canvas.create_window(width/2, height/2, window=tryagain)
 
+	#Quit Button
+	quit = Button(window, text="Quit Game", font="OCRB 30 bold", command=quitting, background="grey", highlightthickness=0)
+	canvas.create_window(width/2, height/2+100, window=quit)
 
-def running():
+def limit(*args):
+	text = nickname.get()
+	if ( len(text) > 3 ):
+		nickname.set(text[:3])
+
+def running(): # this functions is recursive and runs the game continuosly
 	canvas.pack()
 	canvas.config(bg="black")
+
 	global GameOver
 	global pause
 
-	if (not p and not b):
+	if (not p and not b): # if the pause is not on or the "boss key" is not activated we can move the obstacles
 		GameOver = spawning_obstacles()
 
-	else:
+	else: 
 		GameOver = True
 
-	if (GameOver):
+	if (GameOver): # even if the pause is on or we didn't detect any form of collision we loop again
 		window.after(100, running)
 
-	else:
+	else: # we detected a form of collision so we delte all and ask the player for their nickname
 		canvas.delete("all")
+
 		global name_input
 		global lost
-		lost = PhotoImage(file="lose.png")
+		global nickname
+		lost = PhotoImage(file="lose.png") # "game lost" background
 		canvas.create_image(0, 0, image=lost, anchor="nw")
 
-		canvas.create_text(width/2, height/2 - 60, text="You crashed the Spacecraft!\nPlease enter your name below:", font="OCRB 20 bold", fill="white")
+		canvas.create_text(width/2, height/2 - 60, text="You crashed the Spacecraft!\nPlease enter your name below:", font="OCRB 20 bold", fill="grey") # asking the player for the nickname
 
-		name_input = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold")
+		nickname = StringVar()
+		nickname.trace("w", limit)
+
+		name_input = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold", textvariable=nickname) # creating the text box to enter a nickname
 		canvas.create_window(width/2, height/2, window=name_input)
 
-		button = Button(window, text="OK", command = getname, highlightthickness = 0, font="OCRB 10 bold", background="grey")
+		button = Button(window, text="OK", command = getname, highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		canvas.create_window(width/2, height/2+50, window=button) 
 
-def game():
+
+def game(): # this is the main function where we initialise all the values, create game's background, etc
 	canvas.delete("all")
 	global spacecraft
 	global background
 
-	spacecraft = PhotoImage(file="character.png")
-	background = PhotoImage(file="background1.png")
+	spacecraft = PhotoImage(file="character.png") # spacecraft
+	background = PhotoImage(file="background1.png") # game's background
 	bg = canvas.create_image(0, 0, image=background, anchor="nw")
 
 	global player
-	player = canvas.create_image(width/2, height/2, image=spacecraft)
+	player = canvas.create_image(width/2, height/2, image=spacecraft) # creating the player
 
 	global altitude
 	global txt
 
-	altitude = 0
+	altitude = 0 # initialising the altitude to 0 and spawning the text
 	height_text = "ALTITUDE: " + str(altitude) + " ft"
 	txt = canvas.create_text(20, 10, fill="#3F6370", font="OCRB 20 bold", text=height_text, tag="height", anchor="nw")
 
-	canvas.bind("<Left>", move_left)
+	canvas.bind("<Left>", move_left) 
 	canvas.bind("<Right>", move_right)
-	canvas.bind("<Key>", pause)
-	canvas.bind("<b>",bosskey)
-	canvas.bind("<Control-Shift-H>",cheatcode)
+
+	canvas.bind("<p>", pause) # binding "p" for the pause function
+	canvas.bind("<b>",bosskey)# binding "b" for the "boss key" function
+	canvas.bind("<Control-Shift-H>",cheatcode)# binding the combinations of keys for the cheat code
 	canvas.focus_set()
 
-	place_first_obstacle()
-	global ok
+	place_first_obstacle() # placing the first obstacle on the canvas
+	global ok 
 	global start
 	global p
 	global b
 	global cheat
 
-	ok = True
-	start = 1
-	p = False
-	b = False
-	cheat = False
+	ok = True # we didn't spawn all the objects so we initialise ok with True
+	start = 1 # start is one bc we have 2 halves in the lsit of objects
+	p = False # at first pause is turned off
+	b = False # at first "boss key" is turned off
+	cheat = False # at first "cheat code" is not activated
 
-	running()
+	running() # starting the game
 
 def bindings():
 	return 1
@@ -294,19 +499,19 @@ def game2():
 def leaderboard():
 	return 1
 
-def quitting():
+def quitting(): # this functions quits the game
 	canvas.destroy()
 	window.quit()
 
-def start_menu():
+def start_menu():# this function creates the start menu
 	canvas.pack()
 	global background
 	global spacecraft
 
-	background = PhotoImage(file="background1.png")
+	background = PhotoImage(file="background1.png") # background of the start menu
 	canvas.create_image(0, 0, image=background, anchor="nw")
 	
-	spacecraft = PhotoImage(file="character.png")
+	spacecraft = PhotoImage(file="character.png") # spawning the spacecraft for design purposed
 	canvas.create_image(width/2, height/2, image=spacecraft)
 
 	#New Game Button
@@ -334,14 +539,13 @@ def start_menu():
 	canvas.create_window(width/2, height/2+150, window=quit)
 
 
+#<----------------- Actual start of the program ----------------------->
 
-
-
-width =1280
-height =720
+width =1280 # setting the width
+height =720 # setting the height
 window = setWindowsDimensions(width, height)
 canvas = Canvas(window, width=width, height=height, highlightthickness=0)
 
-start_menu()
+start_menu() 
 
 window.mainloop()
