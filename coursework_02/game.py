@@ -61,12 +61,16 @@ def check_collision(i):
 
 	return False
 
+def negation():
+	global cheat
+	cheat = False
 
 def spawning_obstacles():
 	global ok
 	global start
 	global altitude
-
+	global cheat
+	global no_obstacles
 	if (start == 5):
 		ok = False
 
@@ -81,8 +85,14 @@ def spawning_obstacles():
 			canvas.itemconfig(txt, text=height_text)
 			canvas.tag_raise("height")
 
-			if ( check_collision(i) ):
+			if ( check_collision(i) and not cheat):
 				return False
+
+			if (cheat):
+				if ( no_obstacles > 0 ):
+					cheat_obstacles(i)
+					if ( no_obstacles == 0 ):
+							window.after(2000,negation)
 
 			xy_last = canvas.coords(obstacles[start-1])
 
@@ -118,8 +128,14 @@ def spawning_obstacles():
 					canvas.itemconfig(txt, text=height_text)
 					canvas.tag_raise("height")
 
-					if ( check_collision(i) ):
+					if ( check_collision(i) and not cheat):
 					 	return False
+
+					if (cheat):
+						if ( no_obstacles > 0 ):
+							cheat_obstacles(i)
+							if ( no_obstacles == 0 ):
+								window.after(2000, negation)
 
 				else:
 
@@ -133,6 +149,24 @@ def spawning_obstacles():
 						obstacles[i+1]=canvas.create_rectangle(x+150,0 , 1280, 40, fill="white")
 
 		return True
+
+def cheat_obstacles(i):
+	global no_obstacles
+	coords1 = canvas.coords(obstacles[i])
+	coords2 = canvas.coords(obstacles[i+1])
+	xy = canvas.coords(player)
+	#check to see if you pass obstacle i
+
+	if ( xy[1] - 30 >= coords1[3] and xy[1] - 30 <= coords2[3]):
+		no_obstacles -= 1
+
+
+def cheatcode(event):
+	global cheat
+	global no_obstacles
+	if ( not cheat):
+		cheat = True
+		no_obstacles = 3
 
 def pause(event):
 	global p
@@ -233,6 +267,7 @@ def game():
 	canvas.bind("<Right>", move_right)
 	canvas.bind("<Key>", pause)
 	canvas.bind("<b>",bosskey)
+	canvas.bind("<Control-Shift-H>",cheatcode)
 	canvas.focus_set()
 
 	place_first_obstacle()
@@ -240,11 +275,13 @@ def game():
 	global start
 	global p
 	global b
+	global cheat
 
 	ok = True
 	start = 1
 	p = False
 	b = False
+	cheat = False
 
 	running()
 
