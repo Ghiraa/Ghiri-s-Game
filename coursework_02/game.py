@@ -15,7 +15,7 @@ def move_left(event):
 	if ( player in canvas.find_all() ): #if the player exist move it to the left
 		xy = canvas.coords(player)
 		if (xy[0] - 45 > 0 and not p and not b):#if it will not go outside the map if moved and the game is not paused or the boss pause
-			canvas.move(player, -15, 0)
+			canvas.move(player, -20, 0)
 
 # The function which moves the player to the right
 def move_right(event):
@@ -26,7 +26,7 @@ def move_right(event):
 	if ( player in canvas.find_all() ):
 		xy = canvas.coords(player)
 		if (xy[0] + 45 < 1280 and not p and not b): # same as move_left function but we have to test if it will not go outside the map if moved right
-			canvas.move(player, 15, 0)
+			canvas.move(player, 20, 0)
 
 def setWindowsDimensions(w, h): # setting the tkinter dimensions and positions
 	window = Tk()
@@ -54,6 +54,7 @@ def check_collision(i): # function which text if there is any collision between 
 
 	#check for frontal collision
 	if ( (xy[0] - 10 <= coords1[2] and xy[1] - 30 == coords1[3]) or ( xy[0] + 8 >= coords2[0] and xy[1] - 30 == coords2[3] )  ):
+
 		return True
 	
 	#check for right wing collision
@@ -66,6 +67,7 @@ def check_collision(i): # function which text if there is any collision between 
 	
 	#check back collision for left wing
 	if ( xy[1] + 25 >= coords1[1] and xy[1] + 25 <= coords1[3] and xy[0] - 30 <= coords1[2]):
+	
 		return True
 	
 	#check back collision for right wing
@@ -92,8 +94,8 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 		for i in range(0, start, 2): #going through those which are already spawned
 
-			canvas.move(obstacles[i], 0, 5) # moving the obstacles down
-			canvas.move(obstacles[i+1], 0, 5)
+			canvas.move(obstacles[i], 0, 10) # moving the obstacles down
+			canvas.move(obstacles[i+1], 0, 10)
 
 			altitude += 1 # increasing the altitude because we are moving
 			height_text = "ALTITUDE: " + str(altitude) + " ft"
@@ -112,7 +114,7 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 			xy_last = canvas.coords(obstacles[start-1]) # getting the coordinates of the last spawned obstacle
 
-			if ( xy_last[1] > 250): # if there is enough space between the last obstacle and top of the window we can spawn the next one
+			if ( xy_last[1] > 300): # if there is enough space between the last obstacle and top of the window we can spawn the next one
 				start+=2 # count the new obstacle too
 
 				x = rand(10, 1130) # getting a random hole for the obstacle
@@ -139,8 +141,8 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 				if (xy_obj[1] < 720): # if we can move it down
 
-					canvas.move(obstacles[i], 0, 5) # moving the obstacle down               NU UITA SA SCHIMBI VITEZA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					canvas.move(obstacles[i+1], 0, 5)
+					canvas.move(obstacles[i], 0, 10) # moving the obstacle down
+					canvas.move(obstacles[i+1], 0, 10)
 
 					altitude += 1 # increasing the altitude
 					height_text = "ALTITUDE:" + str(altitude) + "ft"
@@ -164,7 +166,7 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 			except: # it means the current obstacle is deleted from the canvas
 
-					if (obstacles[i] not in canvas.find_all() and (xy_last[1] > 250) ): #if there is enough space between the last obstacle and the top of the canvas we have to spawn it
+					if (obstacles[i] not in canvas.find_all() and (xy_last[1] > 300) ): #if there is enough space between the last obstacle and the top of the canvas we have to spawn it
 
 						x = rand(10, 1130) # generating a random hole for the obstacle
 						obstacles[i]=canvas.create_rectangle(0, 0, x, 40, fill="white") # spawn the obstacles
@@ -180,7 +182,6 @@ def cheat_obstacles(i): # this function counts the number of obstacles you go th
 	xy = canvas.coords(player)# coordinates of the spacecraft
 
 	#check to see if you pass obstacle i
-
 	if ( xy[1] - 30 >= coords1[3] and xy[1] - 30 <= coords2[3]):
 		no_obstacles -= 1 # we passed obstacle i so we count
 
@@ -204,6 +205,7 @@ def deletesave():
 
 	saved = canvas.create_window(width/2, height/2 + 50, window = save_button)
 	canvas.bind("<p>", pause)
+	canvas.bind("<b>",bosskey)
 
 def deletesavepage():
 	canvas.delete(go_back2)
@@ -239,13 +241,7 @@ def renamefile(a):
 	canvas.delete(save_img)
 	canvas.delete(go_back)
 	saved = canvas.create_window(width/2, height/2 + 50, window = save_button)
-
-	# canvas.bind("<Left>", move_left) 
-	# canvas.bind("<Right>", move_right)
-
-	# canvas.bind("<p>", pause) # binding "p" for the pause function
-	# canvas.bind("<b>",bosskey)# binding "b" for the "boss key" function
-	# canvas.bind("<Control-Shift-H>",cheatcode)# binding the combinations of keys for the cheat code
+	canvas.bind("<b>", bosskey)
 	canvas.bind("<p>", pause)
 	canvas.focus_set()
 
@@ -266,12 +262,6 @@ def saving(no):
 	global savename
 
 	warning =canvas.create_text(width/2, 40, text="")
-
-	# canvas.delete(saveBTN1)
-	# canvas.delete(saveBTN2)
-	# canvas.delete(saveBTN3)
-	# canvas.delete(saveBTN4)
-	# canvas.delete(saveBTN5)
 
 	canvas.itemconfig(saveBTN1, state="hidden")
 	canvas.itemconfig(saveBTN2, state="hidden")
@@ -348,6 +338,7 @@ def save():
 	global save5
 
 	canvas.delete(saved)
+	canvas.unbind("<b>")
 	canvas.unbind("<p>")
 
 	save_bg = PhotoImage(file="background1.png") # game's background
@@ -399,9 +390,10 @@ def pause(event): # this function checks if the pause is on and turn it off and 
 			canvas.delete(pause_text)
 			canvas.delete(bg_pause)
 			canvas.delete(saved)
-
+		
 	else: # we turn on the pause so we spawn the pause text and the save button
 		p = True
+		
 		bg_pause = canvas.create_rectangle(width/2 - 250, height/2 - 100, width/2 + 250, height/2 + 100, fill="#80bfff")
 		pause_text = canvas.create_text(width/2, height/2, text = "GAME PAUSED", fill="white", font="OCRB 40 bold")
 		
@@ -421,27 +413,63 @@ def bosskey(event): # this function checks if the "boss key" is activated and sp
 			canvas.delete(boss)
 
 	else:# turn on the boss key and spawn the "boss" image
-		boss_image = PhotoImage(file="boss2.PNG") 
-		boss = canvas.create_image(0, 0, image=boss_image, anchor="nw")
-		b = True 
+		if (not p):
+			boss_image = PhotoImage(file="boss2.PNG") 
+			boss = canvas.create_image(0, 0, image=boss_image, anchor="nw")
+			b = True 
+
+
+def leaderboard_create(user):
+	list = []
+	with open("LEADERBOARD","r") as file:
+		list= file.readlines()
+
+	current_place = str(altitude) + " " + user
+	nr1 = str(current_place[:(len(current_place)-4)])
+	with open("LEADERBOARD","w") as file:
+		file.write("")
+	
+	count = 0
+	for i in range(0,len(list)):
+		if (count == 5):
+			break
+		if ( len(list[i]) >= 3):
+			count += 1
+			nr2 = str(list[i][:len(list[i])-4])
+			if (int(nr1) >= int(nr2) ):
+				with open("LEADERBOARD","a") as file:
+					file.write(current_place+"\n")
+				current_place = list[i]
+		else:
+			count += 1
+			with open("LEADERBOARD","a") as file:
+				file.write(current_place+"\n")
+			current_place="0\n"
+
 
 def getname(): #this functions gets the name the player is asked for
 	global name_input
 
 	username = name_input.get()
+	leaderboard_create(username)
 	canvas.delete("all") #delete all we have in canvas so we can create a new background
 
 	global lost
 	lost = PhotoImage(file="lose.png") # creating the "game lost" background
 	canvas.create_image(0, 0, image=lost, anchor="nw")
-
+	global altitude
+	altitude = 0
 	#Try Again button
 	tryagain = Button(window, text="Try Again", font="OCRB 30 bold", command=game, background="grey", highlightthickness=0)
 	canvas.create_window(width/2, height/2, window=tryagain)
 
+	#Main Menu
+	main = Button(window, text="Main Menu", font="OCRB 30 bold", command=start_menu, background="grey", highlightthickness=0)
+	canvas.create_window(width/2, height/2+100, window=main)
+
 	#Quit Button
 	quit = Button(window, text="Quit Game", font="OCRB 30 bold", command=quitting, background="grey", highlightthickness=0)
-	canvas.create_window(width/2, height/2+100, window=quit)
+	canvas.create_window(width/2, height/2+200, window=quit)
 
 def limit(*args):
 	text = nickname.get()
@@ -501,7 +529,7 @@ def game(): # this is the main function where we initialise all the values, crea
 	global altitude
 	global txt
 
-	altitude = 0 # initialising the altitude to 0 and spawning the text
+	#altitude = 0 # initialising the altitude to 0 and spawning the text
 	height_text = "ALTITUDE: " + str(altitude) + " ft"
 	txt = canvas.create_text(20, 10, fill="#3F6370", font="OCRB 20 bold", text=height_text, tag="height", anchor="nw")
 
@@ -532,10 +560,108 @@ def bindings():
 	return 1
 def rules():
 	return 1
+
+def load_buttons(no):
+	canvas.itemconfig(saveBTN1, state="hidden")
+	canvas.itemconfig(saveBTN2, state="hidden")
+	canvas.itemconfig(saveBTN3, state="hidden")
+	canvas.itemconfig(saveBTN4, state="hidden")
+	canvas.itemconfig(saveBTN5, state="hidden")
+	
+	go_back_btn2 = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesavepage)# button for submiting the nickname
+	go_back2 = canvas.create_window(50, 700, window = go_back_btn2)
+	
+	global altitude
+
+	if ( no == 1 ):
+		with open(save1["text"]) as file:
+			altitude = int(file.read())
+		game() 
+
+	if ( no == 2 ):
+		with open(save2["text"]) as file:
+			altitude = int(file.read())
+		game()
+		
+	if ( no == 3 ):
+		with open(save3["text"]) as file:
+			altitude = int(file.read())
+		game()
+		
+	if ( no == 4 ):
+		with open(save4["text"]) as file:
+			altitude = int(file.read())
+		game()
+		
+	if ( no == 5 ):
+		with open(save5["text"]) as file:
+			altitude = int(file.read())
+		game()
+		
+
+
 def game2():
-	return 1
+	global save_bg
+	global save_img
+	global go_back_btn
+	global go_back
+	global saveBTN1
+	global saveBTN2
+	global saveBTN3
+	global saveBTN4
+	global saveBTN5
+	global save1
+	global save2
+	global save3
+	global save4
+	global save5
+
+	canvas.delete("all")
+	save_bg = PhotoImage(file="background1.png") # game's background
+	save_img = canvas.create_image(0, 0, image=background, anchor="nw")
+
+	go_back_btn = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = start_menu)# button for submiting the nickname
+	go_back = canvas.create_window(50, 700, window = go_back_btn) 
+
+
+	x = -100
+	no_files = 0
+	for files in os.listdir():
+
+		if ( len(files) == 3 ):
+			no_files += 1
+			x += 50
+			if (no_files == 1):
+				save1 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: load_buttons(no) ) )# button for submiting the nickname
+				saveBTN1 = canvas.create_window(width/2 , height/2 + x, window = save1, tag="savebuttons")
+			
+			if (no_files == 2):
+				save2 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: load_buttons(no) ))# button for submiting the nickname
+				saveBTN2 = canvas.create_window(width/2 , height/2 + x, window = save2, tag="savebuttons")
+			
+			if (no_files == 3):
+				save3 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: load_buttons(no) ))# button for submiting the nickname
+				saveBTN3 = canvas.create_window(width/2 , height/2 + x, window = save3, tag="savebuttons")
+			
+			if (no_files == 4):
+				save4 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: load_buttons(no) ))# button for submiting the nickname
+				saveBTN4 = canvas.create_window(width/2 , height/2 + x, window = save4, tag="savebuttons")
+			
+			if (no_files == 5):
+				save5 = Button(window, text=files, highlightthickness = 0, font="OCRB 10 bold", background="grey", command = (lambda no = no_files: load_buttons(no) ))# button for submiting the nickname
+				saveBTN5 = canvas.create_window(width/2 , height/2 + x, window = save5, tag="savebuttons")
+
+
+
 def leaderboard():
-	return 1
+	canvas.delete("all")
+	global background
+	global go_back_btn
+	background = PhotoImage(file="background1.png") # background of the start menu
+	canvas.create_image(0, 0, image=background, anchor="nw")
+
+	go_back_btn = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = start_menu)# button for submiting the nickname
+	go_back = canvas.create_window(50, 700, window = go_back_btn) 
 
 def quitting(): # this functions quits the game
 	canvas.destroy()
@@ -543,9 +669,11 @@ def quitting(): # this functions quits the game
 
 def start_menu():# this function creates the start menu
 	canvas.pack()
+	canvas.delete("all")
 	global background
 	global spacecraft
-
+	global altitude
+	altitude = 0
 	background = PhotoImage(file="background1.png") # background of the start menu
 	canvas.create_image(0, 0, image=background, anchor="nw")
 	
