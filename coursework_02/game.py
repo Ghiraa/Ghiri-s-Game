@@ -216,19 +216,45 @@ def deletesavepage():
 	canvas.itemconfig(saveBTN3, state="normal")
 	canvas.itemconfig(saveBTN4, state="normal")
 	canvas.itemconfig(saveBTN5, state="normal")
-	canvas.itemconfig(go_back, state="normal")
+	canvas.itemconfig(go_back,  state="normal")
 
 def renamefile(a):
 	name = name_save.get()
+	global p
+	global saved
+
 	for file in os.listdir():
 		if (file == a):
+
 			save = open(file, "w")
 			save.write( str(altitude) )
-			save.close()
+			
 			os.rename(file, name)
-			break
+
+	canvas.delete(name_save_window)
+	canvas.delete(go_back2)
+	canvas.delete(name_save_submit)
+	canvas.delete(warning)
+	canvas.delete("savebuttons")
+	canvas.delete(save_img)
+	canvas.delete(go_back)
+	saved = canvas.create_window(width/2, height/2 + 50, window = save_button)
+
+	# canvas.bind("<Left>", move_left) 
+	# canvas.bind("<Right>", move_right)
+
+	# canvas.bind("<p>", pause) # binding "p" for the pause function
+	# canvas.bind("<b>",bosskey)# binding "b" for the "boss key" function
+	# canvas.bind("<Control-Shift-H>",cheatcode)# binding the combinations of keys for the cheat code
+	canvas.bind("<p>", pause)
+	canvas.focus_set()
 
 
+
+def limit2(*args):
+	text = savename.get()
+	if ( len(text) > 3 ):
+		savename.set(text[:3])
 
 def saving(no):
 	canvas.itemconfig(go_back, state="hidden")
@@ -237,8 +263,15 @@ def saving(no):
 	global name_save_window
 	global warning
 	global name_save
+	global savename
 
 	warning =canvas.create_text(width/2, 40, text="")
+
+	# canvas.delete(saveBTN1)
+	# canvas.delete(saveBTN2)
+	# canvas.delete(saveBTN3)
+	# canvas.delete(saveBTN4)
+	# canvas.delete(saveBTN5)
 
 	canvas.itemconfig(saveBTN1, state="hidden")
 	canvas.itemconfig(saveBTN2, state="hidden")
@@ -246,7 +279,10 @@ def saving(no):
 	canvas.itemconfig(saveBTN4, state="hidden")
 	canvas.itemconfig(saveBTN5, state="hidden")
 
-	name_save = Entry(window)
+	savename = StringVar()
+	savename.trace("w", limit2)
+
+	name_save = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold", textvariable=savename)
 	name_save_window = canvas.create_window(width/2, height/2, window=name_save)
 	
 	go_back_btn2 = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesavepage)# button for submiting the nickname
@@ -359,6 +395,7 @@ def pause(event): # this function checks if the pause is on and turn it off and 
 		p = False
 
 		if ( pause_text in canvas.find_all() and bg_pause in canvas.find_all() and saved in canvas.find_all() ): # we turn off the pause so we delete the pause text
+			
 			canvas.delete(pause_text)
 			canvas.delete(bg_pause)
 			canvas.delete(saved)
@@ -425,6 +462,7 @@ def running(): # this functions is recursive and runs the game continuosly
 		GameOver = True
 
 	if (GameOver): # even if the pause is on or we didn't detect any form of collision we loop again
+		# print(p)
 		window.after(100, running)
 
 	else: # we detected a form of collision so we delte all and ask the player for their nickname
