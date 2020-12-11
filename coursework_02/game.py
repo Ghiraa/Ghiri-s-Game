@@ -6,6 +6,7 @@ from time import sleep
 from random import randint as rand
 import os
 
+
 # The function which moves the player to the left
 def move_left(event):
 	global player
@@ -15,7 +16,9 @@ def move_left(event):
 	if ( player in canvas.find_all() ): #if the player exist move it to the left
 		xy = canvas.coords(player)
 		if (xy[0] - 45 > 0 and not p and not b):#if it will not go outside the map if moved and the game is not paused or the boss pause
-			canvas.move(player, -20, 0)
+			canvas.move(player, -spacecraftSpeed, 0)
+
+
 
 # The function which moves the player to the right
 def move_right(event):
@@ -26,7 +29,9 @@ def move_right(event):
 	if ( player in canvas.find_all() ):
 		xy = canvas.coords(player)
 		if (xy[0] + 45 < 1280 and not p and not b): # same as move_left function but we have to test if it will not go outside the map if moved right
-			canvas.move(player, 20, 0)
+			canvas.move(player, spacecraftSpeed, 0)
+
+
 
 def setWindowsDimensions(w, h): # setting the tkinter dimensions and positions
 	window = Tk()
@@ -38,6 +43,8 @@ def setWindowsDimensions(w, h): # setting the tkinter dimensions and positions
 	window.geometry('%dx%d+%d+%d' % (w, h, x, y))
 	return window
 
+
+
 def place_first_obstacle(): # placing the first obstacles in the canvas
 	global obstacles
 
@@ -46,6 +53,9 @@ def place_first_obstacle(): # placing the first obstacles in the canvas
 
 	obstacles.append( canvas.create_rectangle(0, 0, x, 40, fill="white") ) # this is the left half of an obstacle
 	obstacles.append( canvas.create_rectangle(x+150,0 , 1280, 40, fill="white") )# this is the right half of an obstacle
+
+
+
 
 def check_collision(i): # function which text if there is any collision between the player and the obstacles
 	coords1 = canvas.coords(obstacles[i]) # getting the coordinates of the first half
@@ -76,9 +86,14 @@ def check_collision(i): # function which text if there is any collision between 
 
 	return False
 
+
+
 def negation(): #this function will turn the cheat off it is on
 	global cheat
 	cheat = False
+
+
+
 
 def spawning_obstacles(): # this function spawns the first obstacles and then just loop them through canvas
 	global ok             # if an obstacle is at the end of the canvas, function deletes it and spawns at top
@@ -94,10 +109,12 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 		for i in range(0, start, 2): #going through those which are already spawned
 
-			canvas.move(obstacles[i], 0, 10) # moving the obstacles down
-			canvas.move(obstacles[i+1], 0, 10)
+			canvas.move(obstacles[i], 0, obstaclesSpeed) # moving the obstacles down
+			canvas.move(obstacles[i+1], 0, obstaclesSpeed)
 
 			altitude += 1 # increasing the altitude because we are moving
+			if ( altitude == 9999 ):
+				return False
 			height_text = "ALTITUDE: " + str(altitude) + " ft"
 			canvas.itemconfig(txt, text=height_text) # reconfiguring the text displayed at top left
 			canvas.tag_raise("height")
@@ -141,10 +158,12 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 				if (xy_obj[1] < 720): # if we can move it down
 
-					canvas.move(obstacles[i], 0, 10) # moving the obstacle down
-					canvas.move(obstacles[i+1], 0, 10)
+					canvas.move(obstacles[i], 0, obstaclesSpeed) # moving the obstacle down
+					canvas.move(obstacles[i+1], 0, obstaclesSpeed)
 
 					altitude += 1 # increasing the altitude
+					if ( altitude == 9999 ):
+						return False
 					height_text = "ALTITUDE:" + str(altitude) + "ft"
 					canvas.itemconfig(txt, text=height_text) # recondifugring the text displayed at top left
 					canvas.tag_raise("height")
@@ -174,6 +193,8 @@ def spawning_obstacles(): # this function spawns the first obstacles and then ju
 
 		return True
 
+
+
 def cheat_obstacles(i): # this function counts the number of obstacles you go through when you have the cheat on
 	global no_obstacles
 
@@ -186,6 +207,7 @@ def cheat_obstacles(i): # this function counts the number of obstacles you go th
 		no_obstacles -= 1 # we passed obstacle i so we count
 
 
+
 def cheatcode(event): # this function checks if the cheat is off and turns it on
 	global cheat
 	global no_obstacles
@@ -193,6 +215,8 @@ def cheatcode(event): # this function checks if the cheat is off and turns it on
 	if ( not cheat ):
 		cheat = True
 		no_obstacles = 3 # initialising the numbers of obstacles we can go through
+
+
 
 def deletesave():
 	global save_img
@@ -207,6 +231,8 @@ def deletesave():
 	canvas.bind("<p>", pause)
 	canvas.bind("<b>",bosskey)
 
+
+
 def deletesavepage():
 	canvas.delete(go_back2)
 	canvas.delete(name_save_submit)
@@ -220,7 +246,9 @@ def deletesavepage():
 	canvas.itemconfig(saveBTN5, state="normal")
 	canvas.itemconfig(go_back,  state="normal")
 
-def renamefile(a,i):
+
+
+def renamefile(a,i): # here we rename the chosen save
 	if ( len(name_save.get()) == 0 ):
 		okk = True
 		while(okk):
@@ -268,7 +296,10 @@ def limit2(*args):
 	if ( len(text) > 5):
 		savename.set(text[:5])
 
-def saving(no):
+
+
+
+def saving(no): # here we check which save was chosen 
 	canvas.itemconfig(go_back, state="hidden")
 	global go_back2
 	global name_save_submit
@@ -291,48 +322,51 @@ def saving(no):
 	name_save = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold", textvariable=savename)
 	name_save_window = canvas.create_window(width/2, height/2, window=name_save)
 	
-	go_back_btn2 = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesavepage)# button for submiting the nickname
+	go_back_btn2 = Button(window, text="GO BACK", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesavepage)# button for submiting the nickname
 	go_back2 = canvas.create_window(50, 700, window = go_back_btn2)
 	
 	if ( no == 1 ):
 
 		if ( save1["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
+			canvas.itemconfig(warning, text="BE CAREFUL! HERE ALREADY EXISTS A SAVE. PROCEEDING CAN RESULT IN LOSING THE INITIAL SAVE!", font="OCRB 15 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save1["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="COMPLETE", command = (lambda a=save1["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn) 
 
 	if ( no == 2 ):
 
 		if ( save2["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
+			canvas.itemconfig(warning, text="BE CAREFUL! HERE ALREADY EXISTS A SAVE. PROCEEDING CAN RESULT IN LOSING THE INITIAL SAVE!", font="OCRB 15 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save2["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="COMPLETE", command = (lambda a=save2["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 	if ( no == 3 ):
 
 		if ( save3["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
+			canvas.itemconfig(warning, text="BE CAREFUL! HERE ALREADY EXISTS A SAVE. PROCEEDING CAN RESULT IN LOSING THE INITIAL SAVE!", font="OCRB 15 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save3["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="COMPLETE", command = (lambda a=save3["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 	if ( no == 4 ):
 
 		if ( save4["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
+			canvas.itemconfig(warning, text="BE CAREFUL! HERE ALREADY EXISTS A SAVE. PROCEEDING CAN RESULT IN LOSING THE INITIAL SAVE!", font="OCRB 15 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save4["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="COMPLETE", command = (lambda a=save4["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 	if ( no == 5 ):
 
 		if ( save5["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
+			canvas.itemconfig(warning, text="BE CAREFUL! HERE ALREADY EXISTS A SAVE. PROCEEDING CAN RESULT IN LOSING THE INITIAL SAVE!", font="OCRB 15 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save5["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="COMPLETE", command = (lambda a=save5["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
+
+
+
 
 def save():
 	global saved
@@ -360,7 +394,7 @@ def save():
 	save_bg = PhotoImage(file="background1.png") # game's background
 	save_img = canvas.create_image(0, 0, image=background, anchor="nw")
 
-	go_back_btn = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesave)# button for submiting the nickname
+	go_back_btn = Button(window, text="GO BACK", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = deletesave)# button for submiting the nickname
 	go_back = canvas.create_window(50, 700, window = go_back_btn) 
 
 	x = -100
@@ -392,6 +426,7 @@ def save():
 			 
 
 
+
 def pause(event): # this function checks if the pause is on and turn it off and vice-versa
 	global p
 	global pause_text
@@ -413,8 +448,9 @@ def pause(event): # this function checks if the pause is on and turn it off and 
 		bg_pause = canvas.create_rectangle(width/2 - 250, height/2 - 100, width/2 + 250, height/2 + 100, fill="#80bfff")
 		pause_text = canvas.create_text(width/2, height/2, text = "GAME PAUSED", fill="white", font="OCRB 40 bold")
 		
-		save_button = Button(window, text="Save the game", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = save)# button for submiting the nickname
+		save_button = Button(window, text="SAVE THE GAME", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = save)# button for submiting the nickname
 		saved = canvas.create_window(width/2, height/2 + 50, window = save_button) 
+
 
 
 
@@ -435,7 +471,9 @@ def bosskey(event): # this function checks if the "boss key" is activated and sp
 			b = True 
 
 
-def leaderboard_create(user):
+
+
+def leaderboard_create(user): # here we try to append the new player to the leaderboard and sort it again
 	list = []
 	with open("LEADERBOARD","r") as file:
 		list= file.readlines()
@@ -481,6 +519,8 @@ def leaderboard_create(user):
 			current_place="0"
 
 
+
+
 def getname(): #this functions gets the name the player is asked for
 	global name_input
 	if ( len(name_input.get()) <5 ):
@@ -492,21 +532,24 @@ def getname(): #this functions gets the name the player is asked for
 	canvas.delete("all") #delete all we have in canvas so we can create a new background
 
 	global lost
-	lost = PhotoImage(file="lose.png") # creating the "game lost" background
+	lost = PhotoImage(file="background1.png") # creating the "game lost" background
 	canvas.create_image(0, 0, image=lost, anchor="nw")
 	global altitude
 	altitude = 0
 	#Try Again button
-	tryagain = Button(window, text="Try Again", font="OCRB 30 bold", command=game, background="grey", highlightthickness=0)
+	tryagain = Button(window, text="TRY AGAIN", font="OCRB 30 bold", command=game, background="grey", highlightthickness=0)
 	canvas.create_window(width/2, height/2, window=tryagain)
 
 	#Main Menu
-	main = Button(window, text="Main Menu", font="OCRB 30 bold", command=start_menu, background="grey", highlightthickness=0)
+	main = Button(window, text="MAIN MENU", font="OCRB 30 bold", command=start_menu, background="grey", highlightthickness=0)
 	canvas.create_window(width/2, height/2+100, window=main)
 
 	#Quit Button
-	quit = Button(window, text="Quit Game", font="OCRB 30 bold", command=quitting, background="grey", highlightthickness=0)
+	quit = Button(window, text="QUIT GAME", font="OCRB 30 bold", command=quitting, background="grey", highlightthickness=0)
 	canvas.create_window(width/2, height/2+200, window=quit)
+
+
+
 
 def limit(*args):
 	text = nickname.get()
@@ -516,6 +559,9 @@ def limit(*args):
 
 	if ( len(text) > 5 ):
 		nickname.set(text[:5])
+
+
+
 
 def running(): # this functions is recursive and runs the game continuosly
 	canvas.pack()
@@ -537,22 +583,41 @@ def running(): # this functions is recursive and runs the game continuosly
 	else: # we detected a form of collision so we delte all and ask the player for their nickname
 		canvas.delete("all")
 
-		global name_input
-		global lost
-		global nickname
-		lost = PhotoImage(file="lose.png") # "game lost" background
-		canvas.create_image(0, 0, image=lost, anchor="nw")
+		if (altitude != 9999):
+			global name_input
+			global lost
+			global nickname
+			lost = PhotoImage(file="background1.png") # "game lost" background
+			canvas.create_image(0, 0, image=lost, anchor="nw")
+			canvas.create_rectangle(20, height/2-80, 1260, height/2 +80, fill="#80bfff")
+			canvas.create_text(width/2, height/2 - 60, text="YOU CRASHED THE SPACECRAFT!", font="OCRB 20 bold", fill="white") # asking the player for the nickname
+			canvas.create_text(width/2, height/2 - 30, text="PLEASE ENTER YOUR NAME BELOW!", font="OCRB 20 bold", fill="white")
+			canvas.create_text(width/2, height/2, text="IT MUST BE 5 LETTER LENGHT, OTHERWISE IT WILL BE PROCCESSED DIFFERENTLY", font="OCRB 20 bold", fill="white")
 
-		canvas.create_text(width/2, height/2 - 60, text="You crashed the Spacecraft!\nPlease enter your name below:", font="OCRB 20 bold", fill="grey") # asking the player for the nickname
+			nickname = StringVar()
+			nickname.trace("w", limit)
 
-		nickname = StringVar()
-		nickname.trace("w", limit)
-
-		name_input = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold", textvariable=nickname) # creating the text box to enter a nickname
-		canvas.create_window(width/2, height/2, window=name_input)
+			name_input = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold", textvariable=nickname) # creating the text box to enter a nickname
+			canvas.create_window(width/2, height/2+130, window=name_input)
+			
+			button = Button(window, text="COMPLETE", command = getname, highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+			canvas.create_window(width/2, height/2+180, window=button) 
 		
-		button = Button(window, text="OK", command = getname, highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
-		canvas.create_window(width/2, height/2+50, window=button) 
+		else:
+
+			global final
+			global QUIT
+			final = PhotoImage(file="finalbg.png")
+			canvas.create_image(0, 0, image = final, anchor="nw")
+
+			canvas.create_text(width/2, height/2 - 100, text="CONGRATULATIONS!", fill="white", font="OCRB 30 bold")
+			canvas.create_text(width/2, height/2 - 50, text="YOU REACHED THE SPACE!", fill="white", font="OCRB 30 bold")
+			canvas.create_text(width/2, height/2 , text="TO BE CONTINUED....", fill="white", font="OCRB 30 bold")
+
+			QUIT = Button(window, text="QUIT", command=quitting, highlightthickness = 0, font="OCRB 30 bold", background="grey")
+			canvas.create_window(width/2, height/2+200, window=QUIT)
+
+
 
 
 def game(): # this is the main function where we initialise all the values, create game's background, etc
@@ -597,10 +662,8 @@ def game(): # this is the main function where we initialise all the values, crea
 
 	running() # starting the game
 
-def bindings():
-	return 1
-def rules():
-	return 1
+
+
 
 def load_buttons(no):
 	canvas.itemconfig(saveBTN1, state="hidden")
@@ -613,7 +676,10 @@ def load_buttons(no):
 	go_back2 = canvas.create_window(50, 700, window = go_back_btn2)
 	
 	global altitude
-
+	global spacecraftSpeed
+	global obstaclesSpeed
+	spacecraftSpeed = 15
+	obstaclesSpeed = 10
 	if ( no == 1 ):
 		with open(save1["text"]) as file:
 			altitude = int(file.read())
@@ -639,6 +705,7 @@ def load_buttons(no):
 			altitude = int(file.read())
 		game()
 		
+
 
 
 def game2():
@@ -694,6 +761,7 @@ def game2():
 
 
 
+
 def leaderboard():
 	canvas.delete("all")
 	global background
@@ -718,9 +786,80 @@ def leaderboard():
 
 
 
+
+def setdifficulty(level):
+	global spacecraftSpeed
+	global obstaclesSpeed
+
+	if ( level == 1 ):
+		spacecraftSpeed = 10
+		obstaclesSpeed = 5
+	
+	if ( level == 2 ):
+		spacecraftSpeed = 15
+		obstaclesSpeed = 10
+
+	if ( level == 3 ):
+		spacecraftSpeed = 10
+		obstaclesSpeed = 10
+
+	game()
+
+
+
+
+def difficulty(): # here we ask the player to choose which difficulty they want to play
+	canvas.delete("all")
+	global background
+	global go_back_btn
+	global easybtn
+	global mediumbtn
+	global hardbtn
+	background = PhotoImage(file="background1.png") # background of the start menu
+	canvas.create_image(0, 0, image=background, anchor="nw")
+
+	go_back_btn = Button(window, text="GO BACK", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = start_menu)# button for submiting the nickname
+	go_back = canvas.create_window(50, 700, window = go_back_btn)
+
+	easybtn = Button(window, text="EASY", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = ( lambda i = 1: setdifficulty(i) ) )# button for submiting the nickname
+	canvas.create_window(width/2, height/2 - 50, window = easybtn)
+
+	mediumbtn = Button(window, text="MEDIUM", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = ( lambda i = 2: setdifficulty(i) ) )# button for submiting the nickname
+	canvas.create_window(width/2, height/2, window = mediumbtn)
+
+	hardbtn = Button(window, text="IMPOSSIBLE!!!", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = ( lambda i = 3: setdifficulty(i) ) )# button for submiting the nickname
+	canvas.create_window(width/2, height/2 + 50, window = hardbtn)
+
+
+
 def quitting(): # this functions quits the game
 	canvas.destroy()
 	window.quit()
+
+
+
+
+def explain():
+	canvas.delete("all")
+	global background
+	global go_back_btn
+	background = PhotoImage(file="background1.png") # background of the start menu
+	canvas.create_image(0, 0, image=background, anchor="nw")
+
+	go_back_btn = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = start_menu)# button for submiting the nickname
+	go_back = canvas.create_window(50, 700, window = go_back_btn)
+
+	canvas.create_rectangle(50, 40, 1230, 680, fill="#80bfff")
+
+	canvas.create_text(width/2, height/2-150, fill="white", font="OCRB 20 bold", text="YOU ARE AN ASTRONAUT WHO IS FLYING A JUST LAUNCHED SPACECRAFT")
+	canvas.create_text(width/2, height/2-100, fill="white", font="OCRB 20 bold", text="MOVE TO THE LEFT BY PRESSING '<-' OR TO THE RIGHT BY PRESSING '->'")
+	canvas.create_text(width/2, height/2-50, fill="white", font="OCRB 20 bold", text="AND DASH THE CLOUDS SO YOU WON'T CRASH ON EARTH")
+	canvas.create_text(width/2, height/2+50, fill="white", font="OCRB 20 bold", text="YOUR GOAL IS TO REACH THE SPACE AND LEAVE EARTH'S ATMOSPHERE")
+	canvas.create_text(width/2, height/2+100, fill="white", font="OCRB 20 bold", text="PRESS P TO PAUSE THE GAME ")
+	canvas.create_text(width/2, height/2+150, fill="white", font="OCRB 20 bold", text="iF YOU ARE PLAYING AT WORK, PRESS B FOR BOSS KEY")
+
+
+
 
 def start_menu():# this function creates the start menu
 	canvas.pack()
@@ -732,32 +871,32 @@ def start_menu():# this function creates the start menu
 	background = PhotoImage(file="background1.png") # background of the start menu
 	canvas.create_image(0, 0, image=background, anchor="nw")
 	
-	spacecraft = PhotoImage(file="character.png") # spawning the spacecraft for design purposed
-	canvas.create_image(width/2, height/2, image=spacecraft)
+	# spacecraft = PhotoImage(file="character.png") # spawning the spacecraft for design purposed
+	# canvas.create_image(width/2, height/2, image=spacecraft)
 
 	#New Game Button
-	start = Button(window, text="New Game", font="OCRB 10 bold", command=game)
-	canvas.create_window(width/2, height/2-150, window=start)
+	start = Button(window, text="NEW GAME", font="OCRB 10 bold", command=difficulty)
+	canvas.create_window(width/2, height/2-100, window=start)
 	
 	#Load Game Button
-	load = Button(window, text="Load Game", font="OCRB 10 bold", command=game2)
-	canvas.create_window(width/2, height/2-100, window=load)
+	load = Button(window, text="LOAD GAME", font="OCRB 10 bold", command=game2)
+	canvas.create_window(width/2, height/2-50, window=load)
 	
 	#Leaderboard Button
-	lead = Button(window, text="Leaderboard", font="OCRB 10 bold", command=leaderboard)
-	canvas.create_window(width/2, height/2-50, window=lead)
+	lead = Button(window, text="LEADERBOARD", font="OCRB 10 bold", command=leaderboard)
+	canvas.create_window(width/2, height/2, window=lead)
 	
 	#How to Play Button
-	howto = Button(window, text="How to Play", font="OCRB 10 bold", command=rules)
-	canvas.create_window(width/2, height/2+50, window=howto)
+	# howto = Button(window, text="How to Play", font="OCRB 10 bold", command=rules)
+	# canvas.create_window(width/2, height/2+50, window=howto)
 
 	#Change Control Button
-	settings = Button(window, text="Control Settings", font="OCRB 10 bold", command=bindings)
-	canvas.create_window(width/2, height/2+100, window=settings)
+	settings = Button(window, text="HOW TO PLAY", font="OCRB 10 bold", command=explain)
+	canvas.create_window(width/2, height/2+50, window=settings)
 
 	#Quit Button
-	quit = Button(window, text="Quit Game", font="OCRB 10 bold", command=quitting)
-	canvas.create_window(width/2, height/2+150, window=quit)
+	quit = Button(window, text="QUIT GAME", font="OCRB 10 bold", command=quitting)
+	canvas.create_window(width/2, height/2+100, window=quit)
 
 
 #<----------------- Actual start of the program ----------------------->
@@ -770,3 +909,7 @@ canvas = Canvas(window, width=width, height=height, highlightthickness=0)
 start_menu() 
 
 window.mainloop()
+
+
+
+# just to be 915
