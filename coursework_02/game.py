@@ -249,8 +249,11 @@ def renamefile(a):
 
 def limit2(*args):
 	text = savename.get()
-	if ( len(text) > 3 ):
-		savename.set(text[:3])
+	savename.set(savename.get().upper())
+	if ( not text.isalpha() ):
+		savename.set(text[:(len(text)-1)])
+	if ( len(text) > 5):
+		savename.set(text[:5])
 
 def saving(no):
 	canvas.itemconfig(go_back, state="hidden")
@@ -280,7 +283,7 @@ def saving(no):
 	
 	if ( no == 1 ):
 
-		if ( save1["text"][:2] != "sv" ):
+		if ( save1["text"][:4] != "save" ):
 			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
 
 		name_save_btn = Button(window, text="Complete", command = (lambda a=save1["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
@@ -288,7 +291,7 @@ def saving(no):
 
 	if ( no == 2 ):
 
-		if ( save2["text"][:2] != "sv" ):
+		if ( save2["text"][:4] != "save" ):
 			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
 
 		name_save_btn = Button(window, text="Complete", command = (lambda a=save2["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
@@ -296,7 +299,7 @@ def saving(no):
 
 	if ( no == 3 ):
 
-		if ( save3["text"][:2] != "sv" ):
+		if ( save3["text"][:4] != "save" ):
 			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
 
 		name_save_btn = Button(window, text="Complete", command = (lambda a=save3["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
@@ -304,7 +307,7 @@ def saving(no):
 
 	if ( no == 4 ):
 
-		if ( save4["text"][:2] != "sv" ):
+		if ( save4["text"][:4] != "save" ):
 			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
 
 		name_save_btn = Button(window, text="Complete", command = (lambda a=save4["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
@@ -312,7 +315,7 @@ def saving(no):
 
 	if ( no == 5 ):
 
-		if ( save5["text"][:2] != "sv" ):
+		if ( save5["text"][:4] != "save" ):
 			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
 
 		name_save_btn = Button(window, text="Complete", command = (lambda a=save5["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
@@ -425,32 +428,53 @@ def leaderboard_create(user):
 		list= file.readlines()
 
 	current_place = str(altitude) + " " + user
-	nr1 = str(current_place[:(len(current_place)-4)])
 	with open("LEADERBOARD","w") as file:
 		file.write("")
-	
-	count = 0
-	for i in range(0,len(list)):
-		if (count == 5):
-			break
+
+
+	for i in range(0,5):
 		if ( len(list[i]) >= 3):
-			count += 1
-			nr2 = str(list[i][:len(list[i])-4])
-			if (int(nr1) >= int(nr2) ):
-				with open("LEADERBOARD","a") as file:
-					file.write(current_place+"\n")
+			
+			nr1 = str(current_place[:(len(current_place)-6)])
+			nr2 = str(list[i][:len(list[i])-6])
+
+			if ( int(nr1) >= int(nr2) ):
+				if (i<4):
+					with open("LEADERBOARD","a") as file:
+						file.write(current_place.rstrip())
+						file.write("\n")
+				else:
+					with open("LEADERBOARD","a") as file:
+						file.write(current_place.rstrip())
+
 				current_place = list[i]
+			else:
+				if (i<4):
+					with open("LEADERBOARD","a") as file:
+						file.write(list[i].rstrip())
+						file.write("\n")
+				else:
+					with open("LEADERBOARD","a") as file:
+						file.write(list[i].rstrip())
+
 		else:
-			count += 1
-			with open("LEADERBOARD","a") as file:
-				file.write(current_place+"\n")
-			current_place="0\n"
+			if (i<4):
+				with open("LEADERBOARD","a") as file:
+					file.write(current_place.rstrip())
+					file.write("\n")
+			else:
+				with open("LEADERBOARD","a") as file:
+					file.write(current_place.rstrip())
+			current_place="0"
 
 
 def getname(): #this functions gets the name the player is asked for
 	global name_input
+	if ( len(name_input.get()) <5 ):
+		username = "XXXXX"
+	else:
+		username = name_input.get()
 
-	username = name_input.get()
 	leaderboard_create(username)
 	canvas.delete("all") #delete all we have in canvas so we can create a new background
 
@@ -473,8 +497,12 @@ def getname(): #this functions gets the name the player is asked for
 
 def limit(*args):
 	text = nickname.get()
-	if ( len(text) > 3 ):
-		nickname.set(text[:3])
+	nickname.set(nickname.get().upper())
+	if ( not text.isalpha() ):
+		nickname.set(text[:(len(text)-1)])
+
+	if ( len(text) > 5 ):
+		nickname.set(text[:5])
 
 def running(): # this functions is recursive and runs the game continuosly
 	canvas.pack()
@@ -509,7 +537,7 @@ def running(): # this functions is recursive and runs the game continuosly
 
 		name_input = Entry(window, background="grey", highlightthickness = 0, font="OCRB 20 bold", textvariable=nickname) # creating the text box to enter a nickname
 		canvas.create_window(width/2, height/2, window=name_input)
-
+		
 		button = Button(window, text="OK", command = getname, highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		canvas.create_window(width/2, height/2+50, window=button) 
 
@@ -661,7 +689,21 @@ def leaderboard():
 	canvas.create_image(0, 0, image=background, anchor="nw")
 
 	go_back_btn = Button(window, text="Go back", highlightthickness = 0, font="OCRB 10 bold", background="grey", command = start_menu)# button for submiting the nickname
-	go_back = canvas.create_window(50, 700, window = go_back_btn) 
+	go_back = canvas.create_window(50, 700, window = go_back_btn)
+
+	list = []
+	with open("LEADERBOARD","r") as file:
+		list= file.readlines()
+	x = -200
+	for i in range(0,5):
+		if(len(list[i]) >= 3):
+			place = str(i+1) + ". " + list[i]
+		else:
+			place = str(i+1) + ". ---------"
+		canvas.create_text(width/2, height/2+x, text=place, font="OCRB 30 bold", fill="dark blue")
+		x += 100
+
+
 
 def quitting(): # this functions quits the game
 	canvas.destroy()
