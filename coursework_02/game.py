@@ -220,8 +220,21 @@ def deletesavepage():
 	canvas.itemconfig(saveBTN5, state="normal")
 	canvas.itemconfig(go_back,  state="normal")
 
-def renamefile(a):
-	name = name_save.get()
+def renamefile(a,i):
+	if ( len(name_save.get()) == 0 ):
+		okk = True
+		while(okk):
+			okk2 = True
+			name = "PLR" + str(rand(10,99))
+			for file in os.listdir():
+				if ( name == file ):
+					okk2 = False
+			
+			if (okk2):
+				okk = False
+
+	else:
+		name = name_save.get()
 	global p
 	global saved
 
@@ -284,41 +297,41 @@ def saving(no):
 	if ( no == 1 ):
 
 		if ( save1["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save1["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save1["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn) 
 
 	if ( no == 2 ):
 
 		if ( save2["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save2["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save2["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 	if ( no == 3 ):
 
 		if ( save3["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save3["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save3["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 	if ( no == 4 ):
 
 		if ( save4["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save4["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save4["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 	if ( no == 5 ):
 
 		if ( save5["text"][:4] != "save" ):
-			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!")
+			canvas.itemconfig(warning, text="Be careful! Here already exists a save. Proceeding can result in losing the initial save!", font="OCRB 18 bold", fill="dark blue")
 
-		name_save_btn = Button(window, text="Complete", command = (lambda a=save5["text"]: renamefile(a)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
+		name_save_btn = Button(window, text="Complete", command = (lambda a=save5["text"], i=no: renamefile(a,i)), highlightthickness = 0, font="OCRB 10 bold", background="grey")# button for submiting the nickname
 		name_save_submit = canvas.create_window(width/2, height/2+50, window=name_save_btn)
 
 def save():
@@ -354,7 +367,7 @@ def save():
 	no_files = 0
 	for files in os.listdir():
 
-		if ( len(files) == 3 ):
+		if ( len(files) <= 5 ):
 			no_files += 1
 			x += 50
 			if (no_files == 1):
@@ -656,7 +669,7 @@ def game2():
 	no_files = 0
 	for files in os.listdir():
 
-		if ( len(files) == 3 ):
+		if ( len(files) <= 5 ):
 			no_files += 1
 			x += 50
 			if (no_files == 1):
